@@ -7,7 +7,6 @@ HyperFrames edit of a 20.8s affiliate video (How to Talk to Anyone + The Psychol
 - `video/preview.html` — browser preview harness (plays the composition with the VO + SFX, no render).
 - `video/data/transcript.json` — word-level transcript of the cleaned voice over (Whisper large-v3, hand-corrected).
 - `video/assets/vo_final.wav` — cleaned VO (denoise, de-ess, -14 LUFS, pauses removed: 23.7s → 20.8s).
-- `video/assets/sfx/` — synthesized SFX (pop, swish, whoosh, pageflip, ding).
 - `video/assets/proxy/` — 540x960 preview proxies. Full-res footage: `scripts/fetch_footage.sh`.
 
 Render locally when approved (free, no cloud credits): `cd video && npx hyperframes render -o out.mp4`.

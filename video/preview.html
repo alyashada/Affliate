@@ -71,9 +71,6 @@
   ul.log li::marker { color: var(--accent); }
   ul.log b { font-weight: 600; }
   .note { color: var(--muted); font-size: 13.5px; margin: 12px 0 0; }
-  .sfx { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
-  .sfx button { font-family: var(--font-mono); font-size: 12px; padding: 4px 9px; border-radius: 8px; border: 1px solid var(--line); background: var(--bg); color: var(--fg); cursor: pointer; font-variant-numeric: tabular-nums; }
-  .sfx button:hover { border-color: var(--accent); }
   @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
 </style>
 
@@ -100,7 +97,6 @@
     </div>
     <div class="toggles">
       <label><input type="checkbox" id="tgGuide"> Tunjuk kawasan UI TikTok</label>
-      <label><input type="checkbox" id="tgSfx" checked> SFX on</label>
       <label><input type="checkbox" id="tgLoop"> Ulang</label>
     </div>
   </div>
@@ -118,10 +114,9 @@
         <li><b>Hook lebih kuat:</b> "Okay," di awal dipotong — video terus mula dengan "Korang nak start baca buku…", dengan dua buku dalam frame, punch-zoom setiap potongan, dan teks skrip "kalau nak start baca, start dengan ni dulu".</li>
         <li><b>Footage dipilih ikut ayat:</b> 13 shot dari 3 video — dua buku masa hook & CTA, How to Talk to Anyone masa body 1, The Psychology of Money (termasuk muka Contents) masa body 2.</li>
         <li><b>Subtitle:</b> huruf putih, perkataan yang sedang disebut jadi hitam atas pil putih, ikut timestamp setiap perkataan.</li>
-        <li><b>Grafik HyperFrames:</b> chip bernombor 01/02 untuk setiap buku, sticker emoji pada kata kunci, beg kuning + anak panah untuk CTA, kad "pilih satu" di penutup.</li>
+        <li><b>Grafik HyperFrames (ringkas):</b> nama buku & penulis dalam teks putih biasa, sticker emoji pada kata kunci, dan kedua-dua nama buku di penutup.</li>
+        <li><b>Tiada sound effect:</b> hanya suara anda.</li>
       </ul>
-      <p class="note">Sound FX (klik untuk dengar di situ):</p>
-      <div class="sfx" id="sfxlist"></div>
       <p class="note">Ayat terakhir saya dengar sebagai "Pilih satu je dulu, pun okay dah." (skrip asal: "Pick one dulu, no rush"). Kalau perkataan lain, beritahu dan saya betulkan subtitle.</p>
     </section>
   </div>
@@ -160,7 +155,6 @@
       vol: +(el.dataset.volume || 1), sfx: el.id !== "vo", buf: null }));
     auds.forEach(el => { el.removeAttribute("src"); el.load(); });  // audio is mixed in this page instead
     videos.forEach(v => { v.el.muted = true; v.el.playsInline = true; });
-    buildSfxList();
     render(0);
     preloadAudio();
   });
@@ -178,7 +172,6 @@
       actx = new (window.AudioContext || window.webkitAudioContext)();
       master = actx.createGain(); master.connect(actx.destination);
       sfxGain = actx.createGain(); sfxGain.connect(master);
-      sfxGain.gain.value = document.getElementById("tgSfx").checked ? 1 : 0;
     }
     if (actx.state === "suspended") await actx.resume();
     const decoded = {};
@@ -297,22 +290,11 @@
     lineEls.forEach(l => l.el.classList.toggle("on", cur >= l.a && cur < l.b));
   }
 
-  function buildSfxList() {
-    const box = document.getElementById("sfxlist");
-    audioClips.filter(c => c.sfx).forEach(c => {
-      const b = document.createElement("button"); b.type = "button";
-      b.textContent = `${c.s.toFixed(2)}s · ${c.url.split("/").pop().replace(".wav", "")}`;
-      b.addEventListener("click", () => { seek(Math.max(0, c.s - 0.6)); if (!playing) play(); });
-      box.appendChild(b);
-    });
-  }
-
   // ---- UI wiring
   bigplay.addEventListener("click", play);
   document.getElementById("pp").addEventListener("click", () => playing ? pause() : play());
   scrub.addEventListener("input", () => seek(+scrub.value));
   document.getElementById("tgGuide").addEventListener("change", e => { document.getElementById("guide").hidden = !e.target.checked; });
-  document.getElementById("tgSfx").addEventListener("change", e => { if (sfxGain) sfxGain.gain.value = e.target.checked ? 1 : 0; });
   document.addEventListener("keydown", e => {
     if (e.code === "Space" && e.target.tagName !== "INPUT") { e.preventDefault(); playing ? pause() : play(); }
   });
