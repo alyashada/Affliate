@@ -4,3 +4,4 @@ work/
 video/assets/footage/
 video/.hyperframes/
 __pycache__/
+out/
