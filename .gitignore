@@ -1,0 +1,6 @@
+node_modules/
+raw/
+work/
+video/assets/footage/
+video/.hyperframes/
+__pycache__/

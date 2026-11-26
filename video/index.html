@@ -1,0 +1,542 @@
+<!doctype html>
+<html lang="ms" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <title>Buku Pertama — affiliate</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;800;900&family=JetBrains+Mono:wght@600&family=Noto+Color+Emoji&display=block" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+    <style>
+      :root {
+        --ground: #0b0b0b;
+        --ink: #ffffff;
+        --accent: #F5C518;
+        --chip: rgba(14, 14, 14, 0.82);
+        --font-display: "Poppins", "Noto Color Emoji", sans-serif;
+        --font-mono: "JetBrains Mono", monospace;
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1920px; overflow: hidden; background: var(--ground); }
+      #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; font-family: var(--font-display); color: var(--ink); }
+
+      .shot { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transform-origin: 50% 45%; }
+      #shade { position: absolute; inset: 0; pointer-events: none; z-index: 5;
+        background: linear-gradient(180deg, rgba(0,0,0,.55) 0%, rgba(0,0,0,0) 26%, rgba(0,0,0,0) 48%, rgba(0,0,0,.55) 78%, rgba(0,0,0,.7) 100%); }
+      #flash { position: absolute; inset: 0; background: #fff; opacity: 0; z-index: 6; pointer-events: none; }
+
+      /* captions: white words, the spoken word turns black on a white pill */
+      .cap { position: absolute; left: 90px; right: 150px; top: 1120px; z-index: 20; text-align: center;
+        font-weight: 800; font-size: 76px; line-height: 1.28; letter-spacing: -0.01em; }
+      .cap .w { display: inline-block; padding: 0 14px; margin: 4px -2px; border-radius: 16px; color: #fff;
+        background-color: rgba(255,255,255,0); text-shadow: 0 4px 0 #000, 0 0 14px rgba(0,0,0,.85), 3px 3px 0 #000, -3px -3px 0 #000, 3px -3px 0 #000, -3px 3px 0 #000; }
+
+      /* hook title */
+      #hook { position: absolute; top: 250px; left: 70px; right: 70px; z-index: 15; text-align: center; }
+      #hook .l1 { font-weight: 800; font-size: 64px; line-height: 1.1; text-shadow: 0 4px 18px rgba(0,0,0,.8); }
+      #hook .l2 { display: inline-block; margin-top: 18px; padding: 10px 30px 14px; border-radius: 22px; background: var(--accent);
+        color: #111; font-weight: 900; font-size: 72px; line-height: 1.05; box-shadow: 0 12px 40px rgba(0,0,0,.45); }
+      #hook .arrow { display: block; margin-top: 10px; font-size: 64px; }
+
+      /* numbered chips, like the reference "5 editing tools" list */
+      .chip { position: absolute; left: 60px; right: 60px; top: 250px; z-index: 15; display: flex; align-items: center; gap: 26px;
+        padding: 30px 36px; border-radius: 30px; background: var(--chip); border: 3px solid var(--accent);
+        box-shadow: 0 18px 50px rgba(0,0,0,.5); }
+      .chip .num { font-family: var(--font-mono); font-size: 40px; color: rgba(255,255,255,.7); }
+      .chip .title { font-weight: 800; font-size: 48px; line-height: 1.05; color: var(--accent); }
+      .chip .by { display: block; font-weight: 600; font-size: 30px; color: rgba(255,255,255,.75); margin-top: 6px; }
+      .chip .tag { margin-left: auto; font-weight: 600; font-size: 30px; color: rgba(255,255,255,.85); text-align: right; line-height: 1.15; }
+
+      .sticker { position: absolute; z-index: 21; font-size: 130px; line-height: 1; font-family: "Noto Color Emoji", sans-serif;
+        filter: drop-shadow(0 8px 14px rgba(0,0,0,.5)); }
+
+      /* CTA bag */
+      #bag { position: absolute; left: 70px; top: 1330px; z-index: 22; display: flex; align-items: center; gap: 22px; transform-origin: 20% 50%; }
+      #bag .bagwrap { position: relative; width: 150px; height: 150px; }
+      #bag .glow { position: absolute; inset: 0; border-radius: 50%; background: var(--accent); opacity: 0; }
+      #bag .bagicon { position: absolute; inset: 0; }
+      #bag .label { padding: 16px 28px; border-radius: 22px; background: var(--accent); color: #111; font-weight: 900; font-size: 50px; line-height: 1.05;
+        box-shadow: 0 12px 40px rgba(0,0,0,.45); }
+      #bag .label small { display: block; font-weight: 700; font-size: 30px; }
+      #bag .down { position: absolute; left: 36px; top: 160px; font-size: 80px; color: var(--accent); font-weight: 900; text-shadow: 0 4px 12px rgba(0,0,0,.7); }
+
+      /* final pick card */
+      #pick { position: absolute; left: 60px; right: 60px; top: 230px; z-index: 15; }
+      #pick .row { position: relative; display: flex; align-items: center; gap: 24px; padding: 24px 32px; margin-bottom: 18px;
+        border-radius: 28px; background: var(--chip); border: 3px solid rgba(255,255,255,.18); }
+      #pick .num { font-family: var(--font-mono); font-size: 36px; color: rgba(255,255,255,.7); }
+      #pick .title { font-weight: 800; font-size: 46px; color: #fff; }
+      #pick .tag { margin-left: auto; font-weight: 600; font-size: 28px; color: var(--accent); }
+      #pick .ask { display: inline-block; margin-top: 8px; padding: 8px 26px 12px; border-radius: 20px; background: #fff; color: #111;
+        font-weight: 900; font-size: 52px; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="20.77" data-width="1080" data-height="1920">
+      <!-- footage -->
+      <video id="shot0" class="clip shot" src="assets/footage/clip1.mp4" data-start="0.00" data-duration="1.50" data-media-start="2.00" data-track-index="0" muted playsinline preload="auto"></video>
+      <video id="shot1" class="clip shot" src="assets/footage/clip1.mp4" data-start="1.50" data-duration="1.36" data-media-start="16.00" data-track-index="0" muted playsinline preload="auto"></video>
+      <video id="shot2" class="clip shot" src="assets/footage/clip1.mp4" data-start="2.86" data-duration="1.52" data-media-start="20.00" data-track-index="0" muted playsinline preload="auto"></video>
+      <video id="shot3" class="clip shot" src="assets/footage/clip2.mp4" data-start="4.38" data-duration="2.22" data-media-start="2.00" data-track-index="0" muted playsinline preload="auto"></video>
+      <video id="shot4" class="clip shot" src="assets/footage/clip2.mp4" data-start="6.60" data-duration="1.10" data-media-start="19.40" data-track-index="0" muted playsinline preload="auto"></video>
+      <video id="shot5" class="clip shot" src="assets/footage/clip2.mp4" data-start="7.70" data-duration="1.22" data-media-start="26.00" data-track-index="0" muted playsinline preload="auto"></video>
+      <video id="shot6" class="clip shot" src="assets/footage/clip2.mp4" data-start="8.92" data-duration="1.82" data-media-start="16.60" data-track-index="0" muted playsinline preload="auto"></video>
+      <video id="shot7" class="clip shot" src="assets/footage/clip2.mp4" data-start="10.74" data-duration="1.68" data-media-start="59.30" data-track-index="0" muted playsinline preload="auto"></video>
+      <video id="shot8" class="clip shot" src="assets/footage/clip3.mp4" data-start="12.42" data-duration="0.96" data-media-start="1.30" data-track-index="0" muted playsinline preload="auto"></video>
+      <video id="shot9" class="clip shot" src="assets/footage/clip3.mp4" data-start="13.38" data-duration="1.76" data-media-start="28.00" data-track-index="0" muted playsinline preload="auto"></video>
+      <video id="shot10" class="clip shot" src="assets/footage/clip3.mp4" data-start="15.14" data-duration="1.08" data-media-start="35.30" data-track-index="0" muted playsinline preload="auto"></video>
+      <video id="shot11" class="clip shot" src="assets/footage/clip1.mp4" data-start="16.22" data-duration="2.72" data-media-start="8.00" data-track-index="0" muted playsinline preload="auto"></video>
+      <video id="shot12" class="clip shot" src="assets/footage/clip1.mp4" data-start="18.94" data-duration="1.83" data-media-start="12.20" data-track-index="0" muted playsinline preload="auto"></video>
+      <div id="shade"></div>
+      <div id="flash"></div>
+
+      <!-- hook title (script on-screen text) -->
+      <div id="hook" class="clip" data-start="0" data-duration="4.40" data-track-index="1">
+        <div class="l1">kalau nak start baca,</div>
+        <div class="l2">start dengan ni dulu</div>
+        <span class="arrow">👇</span>
+      </div>
+
+      <!-- book chips -->
+      <div id="chip1" class="clip chip" data-start="4.50" data-duration="7.95" data-track-index="1">
+        <span class="num">01</span>
+        <div><div class="title">How to Talk to Anyone</div><span class="by">Leil Lowndes</span></div>
+        <div class="tag">awkward<br />→ yakin</div>
+      </div>
+      <div id="chip2" class="clip chip" data-start="12.56" data-duration="3.72" data-track-index="1">
+        <span class="num">02</span>
+        <div><div class="title">The Psychology of Money</div><span class="by">Morgan Housel</span></div>
+        <div class="tag">mindset<br />duit</div>
+      </div>
+
+      <!-- keyword stickers -->
+      <div id="stk0" class="clip sticker" data-start="8.62" data-duration="1.00" data-track-index="3" style="left:800px;top:1010px">😅</div>
+      <div id="stk1" class="clip sticker" data-start="11.90" data-duration="1.00" data-track-index="3" style="left:820px;top:1010px">✅</div>
+      <div id="stk2" class="clip sticker" data-start="13.12" data-duration="1.00" data-track-index="3" style="left:790px;top:1010px">💸</div>
+      <div id="stk3" class="clip sticker" data-start="15.82" data-duration="1.00" data-track-index="3" style="left:810px;top:1010px">🧠</div>
+
+      <!-- CTA: link in the yellow bag -->
+      <div id="bag" class="clip" data-start="17.30" data-duration="3.47" data-track-index="1">
+        <div class="bagwrap">
+          <div class="glow"></div>
+          <svg class="bagicon" viewBox="0 0 120 120" aria-hidden="true">
+            <path d="M40 42 V34 a20 20 0 0 1 40 0 V42" fill="none" stroke="#111" stroke-width="9" stroke-linecap="round" />
+            <path d="M18 40 H102 L95 108 a8 8 0 0 1 -8 7 H33 a8 8 0 0 1 -8 -7 Z" fill="#F5C518" stroke="#111" stroke-width="6" stroke-linejoin="round" />
+            <circle cx="44" cy="58" r="5" fill="#111" /><circle cx="76" cy="58" r="5" fill="#111" />
+          </svg>
+          <div class="down">↓</div>
+        </div>
+        <div class="label">Link kat beg kuning<small>tap &amp; check harga</small></div>
+      </div>
+
+      <!-- final: pick one -->
+      <div id="pick" class="clip" data-start="18.94" data-duration="1.83" data-track-index="1">
+        <div class="row row1"><span class="num">01</span><span class="title">How to Talk to Anyone</span><span class="tag">awkward</span></div>
+        <div class="row row2"><span class="num">02</span><span class="title">Psychology of Money</span><span class="tag">duit</span></div>
+        <span class="ask">Pilih satu je dulu ✌️</span>
+      </div>
+
+      <!-- captions -->
+      <div id="cap0" class="clip cap" data-start="0.00" data-duration="0.86" data-track-index="2"><span class="w" id="w0">Korang</span> <span class="w" id="w1">nak</span> <span class="w" id="w2">start</span></div>
+      <div id="cap1" class="clip cap" data-start="0.86" data-duration="0.64" data-track-index="2"><span class="w" id="w3">baca</span> <span class="w" id="w4">buku</span></div>
+      <div id="cap2" class="clip cap" data-start="1.50" data-duration="0.60" data-track-index="2"><span class="w" id="w5">tapi</span> <span class="w" id="w6">tak</span> <span class="w" id="w7">tahu</span></div>
+      <div id="cap3" class="clip cap" data-start="2.10" data-duration="0.92" data-track-index="2"><span class="w" id="w8">nak</span> <span class="w" id="w9">mula</span> <span class="w" id="w10">dengan</span> <span class="w" id="w11">apa,</span></div>
+      <div id="cap4" class="clip cap" data-start="3.02" data-duration="1.54" data-track-index="2"><span class="w" id="w12">this</span> <span class="w" id="w13">one&#x27;s</span> <span class="w" id="w14">for</span> <span class="w" id="w15">you.</span></div>
+      <div id="cap5" class="clip cap" data-start="4.56" data-duration="0.96" data-track-index="2"><span class="w" id="w16">Honestly,</span> <span class="w" id="w17">I</span> <span class="w" id="w18">pun</span></div>
+      <div id="cap6" class="clip cap" data-start="5.52" data-duration="1.20" data-track-index="2"><span class="w" id="w19">dulu</span> <span class="w" id="w20">malas</span> <span class="w" id="w21">nak</span> <span class="w" id="w22">baca,</span></div>
+      <div id="cap7" class="clip cap" data-start="6.72" data-duration="1.04" data-track-index="2"><span class="w" id="w23">tapi</span> <span class="w" id="w24">this</span> <span class="w" id="w25">one,</span></div>
+      <div id="cap8" class="clip cap" data-start="7.76" data-duration="1.16" data-track-index="2"><span class="w" id="w26">kalau</span> <span class="w" id="w27">you</span> <span class="w" id="w28">jenis</span> <span class="w" id="w29">awkward</span></div>
+      <div id="cap9" class="clip cap" data-start="8.92" data-duration="1.22" data-track-index="2"><span class="w" id="w30">bila</span> <span class="w" id="w31">jumpa</span> <span class="w" id="w32">orang</span> <span class="w" id="w33">baru</span></div>
+      <div id="cap10" class="clip cap" data-start="10.14" data-duration="0.70" data-track-index="2"><span class="w" id="w34">macam</span> <span class="w" id="w35">I</span> <span class="w" id="w36">lah</span> <span class="w" id="w37">kan,</span></div>
+      <div id="cap11" class="clip cap" data-start="10.84" data-duration="1.72" data-track-index="2"><span class="w" id="w38">memang</span> <span class="w" id="w39">sangat</span> <span class="w" id="w40">membantu.</span></div>
+      <div id="cap12" class="clip cap" data-start="12.56" data-duration="0.82" data-track-index="2"><span class="w" id="w41">Yang</span> <span class="w" id="w42">ni</span> <span class="w" id="w43">pasal</span> <span class="w" id="w44">duit,</span></div>
+      <div id="cap13" class="clip cap" data-start="13.38" data-duration="1.06" data-track-index="2"><span class="w" id="w45">tapi</span> <span class="w" id="w46">bukan</span> <span class="w" id="w47">yang</span></div>
+      <div id="cap14" class="clip cap" data-start="14.44" data-duration="0.86" data-track-index="2"><span class="w" id="w48">pening-pening</span> <span class="w" id="w49">tu</span> <span class="w" id="w50">tau,</span></div>
+      <div id="cap15" class="clip cap" data-start="15.30" data-duration="1.40" data-track-index="2"><span class="w" id="w51">more</span> <span class="w" id="w52">to</span> <span class="w" id="w53">mindset.</span></div>
+      <div id="cap16" class="clip cap" data-start="16.70" data-duration="1.44" data-track-index="2"><span class="w" id="w54">Anyway,</span> <span class="w" id="w55">link</span> <span class="w" id="w56">I</span> <span class="w" id="w57">letak</span></div>
+      <div id="cap17" class="clip cap" data-start="18.14" data-duration="0.80" data-track-index="2"><span class="w" id="w58">kat</span> <span class="w" id="w59">beg</span> <span class="w" id="w60">kuning.</span></div>
+      <div id="cap18" class="clip cap" data-start="18.94" data-duration="0.90" data-track-index="2"><span class="w" id="w61">Pilih</span> <span class="w" id="w62">satu</span> <span class="w" id="w63">je</span> <span class="w" id="w64">dulu,</span></div>
+      <div id="cap19" class="clip cap" data-start="19.84" data-duration="0.93" data-track-index="2"><span class="w" id="w65">pun</span> <span class="w" id="w66">okay</span> <span class="w" id="w67">dah.</span></div>
+
+      <!-- audio: cleaned voice over + sfx -->
+      <audio id="vo" class="clip" src="assets/vo_final.wav" data-start="0" data-duration="20.77" data-volume="1" data-track-index="5"></audio>
+      <audio id="sfx0" class="clip" src="assets/sfx/pop.wav" data-start="0.06" data-duration="0.12" data-volume="0.45" data-track-index="6"></audio>
+      <audio id="sfx1" class="clip" src="assets/sfx/pop.wav" data-start="0.32" data-duration="0.12" data-volume="0.4" data-track-index="6"></audio>
+      <audio id="sfx2" class="clip" src="assets/sfx/swish.wav" data-start="1.47" data-duration="0.25" data-volume="0.35" data-track-index="6"></audio>
+      <audio id="sfx3" class="clip" src="assets/sfx/swish.wav" data-start="2.83" data-duration="0.25" data-volume="0.35" data-track-index="6"></audio>
+      <audio id="sfx4" class="clip" src="assets/sfx/whoosh.wav" data-start="4.22" data-duration="0.45" data-volume="0.6" data-track-index="6"></audio>
+      <audio id="sfx5" class="clip" src="assets/sfx/pop.wav" data-start="4.55" data-duration="0.12" data-volume="0.4" data-track-index="7"></audio>
+      <audio id="sfx6" class="clip" src="assets/sfx/pageflip.wav" data-start="6.58" data-duration="0.35" data-volume="0.8" data-track-index="6"></audio>
+      <audio id="sfx7" class="clip" src="assets/sfx/pop.wav" data-start="8.62" data-duration="0.12" data-volume="0.5" data-track-index="6"></audio>
+      <audio id="sfx8" class="clip" src="assets/sfx/pop.wav" data-start="11.90" data-duration="0.12" data-volume="0.45" data-track-index="6"></audio>
+      <audio id="sfx9" class="clip" src="assets/sfx/whoosh.wav" data-start="12.26" data-duration="0.45" data-volume="0.6" data-track-index="6"></audio>
+      <audio id="sfx10" class="clip" src="assets/sfx/pop.wav" data-start="12.60" data-duration="0.12" data-volume="0.4" data-track-index="7"></audio>
+      <audio id="sfx11" class="clip" src="assets/sfx/pop.wav" data-start="13.12" data-duration="0.12" data-volume="0.45" data-track-index="6"></audio>
+      <audio id="sfx12" class="clip" src="assets/sfx/pop.wav" data-start="15.82" data-duration="0.12" data-volume="0.45" data-track-index="6"></audio>
+      <audio id="sfx13" class="clip" src="assets/sfx/whoosh.wav" data-start="16.06" data-duration="0.45" data-volume="0.6" data-track-index="6"></audio>
+      <audio id="sfx14" class="clip" src="assets/sfx/pop.wav" data-start="17.32" data-duration="0.12" data-volume="0.45" data-track-index="6"></audio>
+      <audio id="sfx15" class="clip" src="assets/sfx/ding.wav" data-start="18.42" data-duration="1.10" data-volume="0.45" data-track-index="6"></audio>
+      <audio id="sfx16" class="clip" src="assets/sfx/pop.wav" data-start="19.00" data-duration="0.12" data-volume="0.4" data-track-index="7"></audio>
+      <audio id="sfx17" class="clip" src="assets/sfx/pop.wav" data-start="19.16" data-duration="0.12" data-volume="0.4" data-track-index="7"></audio>
+    </div>
+    <script>
+      const SHADOW = "0 4px 0 #000, 0 0 14px rgba(0,0,0,.85), 3px 3px 0 #000, -3px -3px 0 #000, 3px -3px 0 #000, -3px 3px 0 #000";
+      const tl = gsap.timeline({ paused: true });
+      tl.fromTo("#shot0", {scale: 1.16}, {scale: 1.04, duration: 0.28, ease: "power3.out"}, 0.00);
+      tl.to("#shot0", {scale: 1.0, duration: 1.22, ease: "none"}, 0.28);
+      tl.fromTo("#shot1", {scale: 1.16}, {scale: 1.04, duration: 0.28, ease: "power3.out"}, 1.50);
+      tl.to("#shot1", {scale: 1.0, duration: 1.08, ease: "none"}, 1.78);
+      tl.fromTo("#shot2", {scale: 1.16}, {scale: 1.04, duration: 0.28, ease: "power3.out"}, 2.86);
+      tl.to("#shot2", {scale: 1.0, duration: 1.24, ease: "none"}, 3.14);
+      tl.fromTo("#shot3", {scale: 1.12}, {scale: 1.0, duration: 2.22, ease: "power1.out"}, 4.38);
+      tl.fromTo("#shot3", {filter: "blur(14px) brightness(1.35)"}, {filter: "blur(0px) brightness(1)", duration: 0.22, ease: "power2.out"}, 4.38);
+      tl.fromTo("#shot4", {scale: 1.0}, {scale: 1.07, duration: 1.10, ease: "none"}, 6.60);
+      tl.fromTo("#shot5", {scale: 1.0}, {scale: 1.07, duration: 1.22, ease: "none"}, 7.70);
+      tl.fromTo("#shot6", {scale: 1.0}, {scale: 1.07, duration: 1.82, ease: "none"}, 8.92);
+      tl.fromTo("#shot7", {scale: 1.16}, {scale: 1.04, duration: 0.28, ease: "power3.out"}, 10.74);
+      tl.to("#shot7", {scale: 1.0, duration: 1.40, ease: "none"}, 11.02);
+      tl.fromTo("#shot8", {scale: 1.12}, {scale: 1.0, duration: 0.96, ease: "power1.out"}, 12.42);
+      tl.fromTo("#shot8", {filter: "blur(14px) brightness(1.35)"}, {filter: "blur(0px) brightness(1)", duration: 0.22, ease: "power2.out"}, 12.42);
+      tl.fromTo("#shot9", {scale: 1.0}, {scale: 1.07, duration: 1.76, ease: "none"}, 13.38);
+      tl.fromTo("#shot10", {scale: 1.16}, {scale: 1.04, duration: 0.28, ease: "power3.out"}, 15.14);
+      tl.to("#shot10", {scale: 1.0, duration: 0.80, ease: "none"}, 15.42);
+      tl.fromTo("#shot11", {scale: 1.12}, {scale: 1.0, duration: 2.72, ease: "power1.out"}, 16.22);
+      tl.fromTo("#shot11", {filter: "blur(14px) brightness(1.35)"}, {filter: "blur(0px) brightness(1)", duration: 0.22, ease: "power2.out"}, 16.22);
+      tl.fromTo("#shot12", {scale: 1.0}, {scale: 1.07, duration: 1.83, ease: "none"}, 18.94);
+      tl.fromTo("#flash", {opacity: 0.55}, {opacity: 0, duration: 0.25, ease: "power2.out", immediateRender: false}, 4.38);
+      tl.fromTo("#flash", {opacity: 0.55}, {opacity: 0, duration: 0.25, ease: "power2.out", immediateRender: false}, 12.42);
+      tl.fromTo("#flash", {opacity: 0.55}, {opacity: 0, duration: 0.25, ease: "power2.out", immediateRender: false}, 16.22);
+      tl.fromTo("#cap0", {y: 24, opacity: 0}, {y: 0, opacity: 1, duration: 0.14, ease: "back.out(2)"}, 0.00);
+      tl.set("#w0", {backgroundColor: "#ffffff", color: "#0b0b0b", textShadow: "none"}, 0.00);
+      tl.fromTo("#w0", {scale: 0.92}, {scale: 1.06, duration: 0.09, ease: "power2.out"}, 0.00);
+      tl.to("#w0", {scale: 1, duration: 0.08}, 0.09);
+      tl.set("#w0", {backgroundColor: "rgba(255,255,255,0)", color: "#ffffff", textShadow: SHADOW}, 0.54);
+      tl.set("#w1", {backgroundColor: "#ffffff", color: "#0b0b0b", textShadow: "none"}, 0.54);
+      tl.fromTo("#w1", {scale: 0.92}, {scale: 1.06, duration: 0.09, ease: "power2.out"}, 0.54);
+      tl.to("#w1", {scale: 1, duration: 0.08}, 0.63);
+      tl.set("#w1", {backgroundColor: "rgba(255,255,255,0)", color: "#ffffff", textShadow: SHADOW}, 0.66);
+      tl.set("#w2", {backgroundColor: "#ffffff", color: "#0b0b0b", textShadow: "none"}, 0.66);
+      tl.fromTo("#w2", {scale: 0.92}, {scale: 1.06, duration: 0.09, ease: "power2.out"}, 0.66);
+      tl.to("#w2", {scale: 1, duration: 0.08}, 0.75);
+      tl.set("#w2", {backgroundColor: "rgba(255,255,255,0)", color: "#ffffff", textShadow: SHADOW}, 0.86);
+      tl.fromTo("#cap1", {y: 24, opacity: 0}, {y: 0, opacity: 1, duration: 0.14, ease: "back.out(2)"}, 0.86);
+      tl.set("#w3", {backgroundColor: "#ffffff", color: "#0b0b0b", textShadow: "none"}, 0.86);
+      tl.fromTo("#w3", {scale: 0.92}, {scale: 1.06, duration: 0.09, ease: "power2.out"}, 0.86);
+      tl.to("#w3", {scale: 1, duration: 0.08}, 0.95);
+      tl.set("#w3", {backgroundColor: "rgba(255,255,255,0)", color: "#ffffff", textShadow: SHADOW}, 1.14);
+      tl.set("#w4", {backgroundColor: "#ffffff", color: "#0b0b0b", textShadow: "none"}, 1.14);
+      tl.fromTo("#w4", {scale: 0.92}, {scale: 1.06, duration: 0.09, ease: "power2.out"}, 1.14);
+      tl.to("#w4", {scale: 1, duration: 0.08}, 1.23);
+      tl.set("#w4", {backgroundColor: "rgba(255,255,255,0)", color: "#ffffff", textShadow: SHADOW}, 1.50);
+      tl.fromTo("#cap2", {y: 24, opacity: 0}, {y: 0, opacity: 1, duration: 0.14, ease: "back.out(2)"}, 1.50);
+      tl.set("#w5", {backgroundColor: "#ffffff", color: "#0b0b0b", textShadow: "none"}, 1.50);
+      tl.fromTo("#w5", {scale: 0.92}, {scale: 1.06, duration: 0.09, ease: "power2.out"}, 1.50);
+      tl.to("#w5", {scale: 1, duration: 0.08}, 1.59);
+      tl.set("#w5", {backgroundColor: "rgba(255,255,255,0)", color: "#ffffff", textShadow: SHADOW}, 1.68);
+      tl.set("#w6", {backgroundColor: "#ffffff", color: "#0b0b0b", textShadow: "none"}, 1.68);
+      tl.fromTo("#w6", {scale: 0.92}, {scale: 1.06, duration: 0.09, ease: "power2.out"}, 1.68);
+      tl.to("#w6", {scale: 1, duration: 0.08}, 1.77);
+      tl.set("#w6", {backgroundColor: "rgba(255,255,255,0)", color: "#ffffff", textShadow: SHADOW}, 1.82);
+      tl.set("#w7", {backgroundColor: "#ffffff", color: "#0b0b0b", textShadow: "none"}, 1.82);
+      tl.fromTo("#w7", {scale: 0.92}, {scale: 1.06, duration: 0.09, ease: "power2.out"}, 1.82);
+      tl.to("#w7", {scale: 1, duration: 0.08}, 1.91);
+      tl.set("#w7", {backgroundColor: "rgba(255,255,255,0)", color: "#ffffff", textShadow: SHADOW}, 2.10);
+      tl.fromTo("#cap3", {y: 24, opacity: 0}, {y: 0, opacity: 1, duration: 0.14, ease: "back.out(2)"}, 2.10);
+      tl.set("#w8", {backgroundColor: "#ffffff", color: "#0b0b0b", textShadow: "none"}, 2.10);
+      tl.fromTo("#w8", {scale: 0.92}, {scale: 1.06, duration: 0.09, ease: "power2.out"}, 2.10);
+      tl.to("#w8", {scale: 1, duration: 0.08}, 2.19);
+      tl.set("#w8", {backgroundColor: "rgba(255,255,255,0)", color: "#ffffff", textShadow: SHADOW}, 2.26);
+      tl.set("#w9", {backgroundColor: "#ffffff", color: "#0b0b0b", textShadow: "none"}, 2.26);
+      tl.fromTo("#w9", {scale: 0.92}, {scale: 1.06, duration: 0.09, ease: "power2.out"}, 2.26);
+      tl.to("#w9", {scale: 1, duration: 0.08}, 2.35);
+      tl.set("#w9", {backgroundColor: "rgba(255,255,255,0)", color: "#ffffff", textShadow: SHADOW}, 2.40);
+      tl.set("#w10", {backgroundColor: "#ffffff", color: "#0b0b0b", textShadow: "none"}, 2.40);
+      tl.fromTo("#w10", {scale: 0.92}, {scale: 1.06, duration: 0.09, ease: "power2.out"}, 2.40);
+      tl.to("#w10", {scale: 1, duration: 0.08}, 2.49);
+      tl.set("#w10", {backgroundColor: "rgba(255,255,255,0)", color: "#ffffff", textShadow: SHADOW}, 2.52);
+      tl.set("#w11", {backgroundColor: "#ffffff", color: "#0b0b0b", textShadow: "none"}, 2.52);
+      tl.fromTo("#w11", {scale: 0.92}, {scale: 1.06, duration: 0.09, ease: "power2.out"}, 2.52);
+      tl.to("#w11", {scale: 1, duration: 0.08}, 2.61);
+      tl.set("#w11", {backgroundColor: "rgba(255,255,255,0)", color: "#ffffff", textShadow: SHADOW}, 3.02);
+      tl.fromTo("#cap4", {y: 24, opacity: 0}, {y: 0, opacity: 1, duration: 0.14, ease: "back.out(2)"}, 3.02);
+      tl.set("#w12", {backgroundColor: "#ffffff", color: "#0b0b0b", textShadow: "none"}, 3.02);
+      tl.fromTo("#w12", {scale: 0.92}, {scale: 1.06, duration: 0.09, ease: "power2.out"}, 3.02);
+      tl.to("#w12", {scale: 1, duration: 0.08}, 3.11);
+      tl.set("#w12", {backgroundColor: "rgba(255,255,255,0)", color: "#ffffff", textShadow: SHADOW}, 3.40);
+      tl.set("#w13", {backgroundColor: "#ffffff", color: "#0b0b0b", textShadow: "none"}, 3.40);
+      tl.fromTo("#w13", {scale: 0.92}, {scale: 1.06, duration: 0.09, ease: "power2.out"}, 3.40);
+      tl.to("#w13", {scale: 1, duration: 0.08}, 3.49);
+      tl.set("#w13", {backgroundColor: "rgba(255,255,255,0)", color: "#ffffff", textShadow: SHADOW}, 3.80);
+      tl.set("#w14", {backgroundColor: "#ffffff", color: "#0b0b0b", textShadow: "none"}, 3.80);
+      tl.fromTo("#w14", {scale: 0.92}, {scale: 1.06, duration: 0.09, ease: "power2.out"}, 3.80);
+      tl.to("#w14", {scale: 1, duration: 0.08}, 3.89);
+      tl.set("#w14", {backgroundColor: "rgba(255,255,255,0)", color: "#ffffff", textShadow: SHADOW}, 3.96);
+      tl.set("#w15", {backgroundColor: "#ffffff", color: "#0b0b0b", textShadow: "none"}, 3.96);
+      tl.fromTo("#w15", {scale: 0.92}, {scale: 1.06, duration: 0.09, ease: "power2.out"}, 3.96);
+      tl.to("#w15", {scale: 1, duration: 0.08}, 4.05);
+      tl.set("#w15", {backgroundColor: "rgba(255,255,255,0)", color: "#ffffff", textShadow: SHADOW}, 4.56);
+      tl.fromTo("#cap5", {y: 24, opacity: 0}, {y: 0, opacity: 1, duration: 0.14, ease: "back.out(2)"}, 4.56);
+      tl.set("#w16", {backgroundColor: "#ffffff", color: "#0b0b0b", textShadow: "none"}, 4.56);
+      tl.fromTo("#w16", {scale: 0.92}, {scale: 1.06, duration: 0.09, ease: "power2.out"}, 4.56);
+      tl.to("#w16", {scale: 1, duration: 0.08}, 4.65);
+      tl.set("#w16", {backgroundColor: "rgba(255,255,255,0)", color: "#ffffff", textShadow: SHADOW}, 5.16);
+      tl.set("#w17", {backgroundColor: "#ffffff", color: "#0b0b0b", textShadow: "none"}, 5.16);
+      tl.fromTo("#w17", {scale: 0.92}, {scale: 1.06, duration: 0.09, ease: "power2.out"}, 5.16);
+      tl.to("#w17", {scale: 1, duration: 0.08}, 5.25);
+      tl.set("#w17", {backgroundColor: "rgba(255,255,255,0)", color: "#ffffff", textShadow: SHADOW}, 5.30);
+      tl.set("#w18", {backgroundColor: "#ffffff", color: "#0b0b0b", textShadow: "none"}, 5.30);
+      tl.fromTo("#w18", {scale: 0.92}, {scale: 1.06, duration: 0.09, ease: "power2.out"}, 5.30);
+      tl.to("#w18", {scale: 1, duration: 0.08}, 5.39);
+      tl.set("#w18", {backgroundColor: "rgba(255,255,255,0)", color: "#ffffff", textShadow: SHADOW}, 5.52);
+      tl.fromTo("#cap6", {y: 24, opacity: 0}, {y: 0, opacity: 1, duration: 0.14, ease: "back.out(2)"}, 5.52);
+      tl.set("#w19", {backgroundColor: "#ffffff", color: "#0b0b0b", textShadow: "none"}, 5.52);
+      tl.fromTo("#w19", {scale: 0.92}, {scale: 1.06, duration: 0.09, ease: "power2.out"}, 5.52);
+      tl.to("#w19", {scale: 1, duration: 0.08}, 5.61);
+      tl.set("#w19", {backgroundColor: "rgba(255,255,255,0)", color: "#ffffff", textShadow: SHADOW}, 5.70);
+      tl.set("#w20", {backgroundColor: "#ffffff", color: "#0b0b0b", textShadow: "none"}, 5.70);
+      tl.fromTo("#w20", {scale: 0.92}, {scale: 1.06, duration: 0.09, ease: "power2.out"}, 5.70);
+      tl.to("#w20", {scale: 1, duration: 0.08}, 5.79);
+      tl.set("#w20", {backgroundColor: "rgba(255,255,255,0)", color: "#ffffff", textShadow: SHADOW}, 6.18);
+      tl.set("#w21", {backgroundColor: "#ffffff", color: "#0b0b0b", textShadow: "none"}, 6.18);
+      tl.fromTo("#w21", {scale: 0.92}, {scale: 1.06, duration: 0.09, ease: "power2.out"}, 6.18);
+      tl.to("#w21", {scale: 1, duration: 0.08}, 6.27);
+      tl.set("#w21", {backgroundColor: "rgba(255,255,255,0)", color: "#ffffff", textShadow: SHADOW}, 6.26);
+      tl.set("#w22", {backgroundColor: "#ffffff", color: "#0b0b0b", textShadow: "none"}, 6.26);
+      tl.fromTo("#w22", {scale: 0.92}, {scale: 1.06, duration: 0.09, ease: "power2.out"}, 6.26);
+      tl.to("#w22", {scale: 1, duration: 0.08}, 6.35);
+      tl.set("#w22", {backgroundColor: "rgba(255,255,255,0)", color: "#ffffff", textShadow: SHADOW}, 6.72);
+      tl.fromTo("#cap7", {y: 24, opacity: 0}, {y: 0, opacity: 1, duration: 0.14, ease: "back.out(2)"}, 6.72);
+      tl.set("#w23", {backgroundColor: "#ffffff", color: "#0b0b0b", textShadow: "none"}, 6.72);
+      tl.fromTo("#w23", {scale: 0.92}, {scale: 1.06, duration: 0.09, ease: "power2.out"}, 6.72);
+      tl.to("#w23", {scale: 1, duration: 0.08}, 6.81);
+      tl.set("#w23", {backgroundColor: "rgba(255,255,255,0)", color: "#ffffff", textShadow: SHADOW}, 7.16);
+      tl.set("#w24", {backgroundColor: "#ffffff", color: "#0b0b0b", textShadow: "none"}, 7.16);
+      tl.fromTo("#w24", {scale: 0.92}, {scale: 1.06, duration: 0.09, ease: "power2.out"}, 7.16);
+      tl.to("#w24", {scale: 1, duration: 0.08}, 7.25);
+      tl.set("#w24", {backgroundColor: "rgba(255,255,255,0)", color: "#ffffff", textShadow: SHADOW}, 7.36);
+      tl.set("#w25", {backgroundColor: "#ffffff", color: "#0b0b0b", textShadow: "none"}, 7.36);
+      tl.fromTo("#w25", {scale: 0.92}, {scale: 1.06, duration: 0.09, ease: "power2.out"}, 7.36);
+      tl.to("#w25", {scale: 1, duration: 0.08}, 7.45);
+      tl.set("#w25", {backgroundColor: "rgba(255,255,255,0)", color: "#ffffff", textShadow: SHADOW}, 7.76);
+      tl.fromTo("#cap8", {y: 24, opacity: 0}, {y: 0, opacity: 1, duration: 0.14, ease: "back.out(2)"}, 7.76);
+      tl.set("#w26", {backgroundColor: "#ffffff", color: "#0b0b0b", textShadow: "none"}, 7.76);
+      tl.fromTo("#w26", {scale: 0.92}, {scale: 1.06, duration: 0.09, ease: "power2.out"}, 7.76);
+      tl.to("#w26", {scale: 1, duration: 0.08}, 7.85);
+      tl.set("#w26", {backgroundColor: "rgba(255,255,255,0)", color: "#ffffff", textShadow: SHADOW}, 8.17);
+      tl.set("#w27", {backgroundColor: "#ffffff", color: "#0b0b0b", textShadow: "none"}, 8.17);
+      tl.fromTo("#w27", {scale: 0.92}, {scale: 1.06, duration: 0.09, ease: "power2.out"}, 8.17);
+      tl.to("#w27", {scale: 1, duration: 0.08}, 8.26);
+      tl.set("#w27", {backgroundColor: "rgba(255,255,255,0)", color: "#ffffff", textShadow: SHADOW}, 8.31);
+      tl.set("#w28", {backgroundColor: "#ffffff", color: "#0b0b0b", textShadow: "none"}, 8.31);
+      tl.fromTo("#w28", {scale: 0.92}, {scale: 1.06, duration: 0.09, ease: "power2.out"}, 8.31);
+      tl.to("#w28", {scale: 1, duration: 0.08}, 8.40);
+      tl.set("#w28", {backgroundColor: "rgba(255,255,255,0)", color: "#ffffff", textShadow: SHADOW}, 8.58);
+      tl.set("#w29", {backgroundColor: "#ffffff", color: "#0b0b0b", textShadow: "none"}, 8.58);
+      tl.fromTo("#w29", {scale: 0.92}, {scale: 1.06, duration: 0.09, ease: "power2.out"}, 8.58);
+      tl.to("#w29", {scale: 1, duration: 0.08}, 8.67);
+      tl.set("#w29", {backgroundColor: "rgba(255,255,255,0)", color: "#ffffff", textShadow: SHADOW}, 8.92);
+      tl.fromTo("#cap9", {y: 24, opacity: 0}, {y: 0, opacity: 1, duration: 0.14, ease: "back.out(2)"}, 8.92);
+      tl.set("#w30", {backgroundColor: "#ffffff", color: "#0b0b0b", textShadow: "none"}, 8.92);
+      tl.fromTo("#w30", {scale: 0.92}, {scale: 1.06, duration: 0.09, ease: "power2.out"}, 8.92);
+      tl.to("#w30", {scale: 1, duration: 0.08}, 9.01);
+      tl.set("#w30", {backgroundColor: "rgba(255,255,255,0)", color: "#ffffff", textShadow: SHADOW}, 9.42);
+      tl.set("#w31", {backgroundColor: "#ffffff", color: "#0b0b0b", textShadow: "none"}, 9.42);
+      tl.fromTo("#w31", {scale: 0.92}, {scale: 1.06, duration: 0.09, ease: "power2.out"}, 9.42);
+      tl.to("#w31", {scale: 1, duration: 0.08}, 9.51);
+      tl.set("#w31", {backgroundColor: "rgba(255,255,255,0)", color: "#ffffff", textShadow: SHADOW}, 9.76);
+      tl.set("#w32", {backgroundColor: "#ffffff", color: "#0b0b0b", textShadow: "none"}, 9.76);
+      tl.fromTo("#w32", {scale: 0.92}, {scale: 1.06, duration: 0.09, ease: "power2.out"}, 9.76);
+      tl.to("#w32", {scale: 1, duration: 0.08}, 9.85);
+      tl.set("#w32", {backgroundColor: "rgba(255,255,255,0)", color: "#ffffff", textShadow: SHADOW}, 9.86);
+      tl.set("#w33", {backgroundColor: "#ffffff", color: "#0b0b0b", textShadow: "none"}, 9.86);
+      tl.fromTo("#w33", {scale: 0.92}, {scale: 1.06, duration: 0.09, ease: "power2.out"}, 9.86);
+      tl.to("#w33", {scale: 1, duration: 0.08}, 9.95);
+      tl.set("#w33", {backgroundColor: "rgba(255,255,255,0)", color: "#ffffff", textShadow: SHADOW}, 10.14);
+      tl.fromTo("#cap10", {y: 24, opacity: 0}, {y: 0, opacity: 1, duration: 0.14, ease: "back.out(2)"}, 10.14);
+      tl.set("#w34", {backgroundColor: "#ffffff", color: "#0b0b0b", textShadow: "none"}, 10.14);
+      tl.fromTo("#w34", {scale: 0.92}, {scale: 1.06, duration: 0.09, ease: "power2.out"}, 10.14);
+      tl.to("#w34", {scale: 1, duration: 0.08}, 10.23);
+      tl.set("#w34", {backgroundColor: "rgba(255,255,255,0)", color: "#ffffff", textShadow: SHADOW}, 10.32);
+      tl.set("#w35", {backgroundColor: "#ffffff", color: "#0b0b0b", textShadow: "none"}, 10.32);
+      tl.fromTo("#w35", {scale: 0.92}, {scale: 1.06, duration: 0.09, ease: "power2.out"}, 10.32);
+      tl.to("#w35", {scale: 1, duration: 0.08}, 10.41);
+      tl.set("#w35", {backgroundColor: "rgba(255,255,255,0)", color: "#ffffff", textShadow: SHADOW}, 10.48);
+      tl.set("#w36", {backgroundColor: "#ffffff", color: "#0b0b0b", textShadow: "none"}, 10.48);
+      tl.fromTo("#w36", {scale: 0.92}, {scale: 1.06, duration: 0.09, ease: "power2.out"}, 10.48);
+      tl.to("#w36", {scale: 1, duration: 0.08}, 10.57);
+      tl.set("#w36", {backgroundColor: "rgba(255,255,255,0)", color: "#ffffff", textShadow: SHADOW}, 10.60);
+      tl.set("#w37", {backgroundColor: "#ffffff", color: "#0b0b0b", textShadow: "none"}, 10.60);
+      tl.fromTo("#w37", {scale: 0.92}, {scale: 1.06, duration: 0.09, ease: "power2.out"}, 10.60);
+      tl.to("#w37", {scale: 1, duration: 0.08}, 10.69);
+      tl.set("#w37", {backgroundColor: "rgba(255,255,255,0)", color: "#ffffff", textShadow: SHADOW}, 10.84);
+      tl.fromTo("#cap11", {y: 24, opacity: 0}, {y: 0, opacity: 1, duration: 0.14, ease: "back.out(2)"}, 10.84);
+      tl.set("#w38", {backgroundColor: "#ffffff", color: "#0b0b0b", textShadow: "none"}, 10.84);
+      tl.fromTo("#w38", {scale: 0.92}, {scale: 1.06, duration: 0.09, ease: "power2.out"}, 10.84);
+      tl.to("#w38", {scale: 1, duration: 0.08}, 10.93);
+      tl.set("#w38", {backgroundColor: "rgba(255,255,255,0)", color: "#ffffff", textShadow: SHADOW}, 11.46);
+      tl.set("#w39", {backgroundColor: "#ffffff", color: "#0b0b0b", textShadow: "none"}, 11.46);
+      tl.fromTo("#w39", {scale: 0.92}, {scale: 1.06, duration: 0.09, ease: "power2.out"}, 11.46);
+      tl.to("#w39", {scale: 1, duration: 0.08}, 11.55);
+      tl.set("#w39", {backgroundColor: "rgba(255,255,255,0)", color: "#ffffff", textShadow: SHADOW}, 11.88);
+      tl.set("#w40", {backgroundColor: "#ffffff", color: "#0b0b0b", textShadow: "none"}, 11.88);
+      tl.fromTo("#w40", {scale: 0.92}, {scale: 1.06, duration: 0.09, ease: "power2.out"}, 11.88);
+      tl.to("#w40", {scale: 1, duration: 0.08}, 11.97);
+      tl.set("#w40", {backgroundColor: "rgba(255,255,255,0)", color: "#ffffff", textShadow: SHADOW}, 12.56);
+      tl.fromTo("#cap12", {y: 24, opacity: 0}, {y: 0, opacity: 1, duration: 0.14, ease: "back.out(2)"}, 12.56);
+      tl.set("#w41", {backgroundColor: "#ffffff", color: "#0b0b0b", textShadow: "none"}, 12.56);
+      tl.fromTo("#w41", {scale: 0.92}, {scale: 1.06, duration: 0.09, ease: "power2.out"}, 12.56);
+      tl.to("#w41", {scale: 1, duration: 0.08}, 12.65);
+      tl.set("#w41", {backgroundColor: "rgba(255,255,255,0)", color: "#ffffff", textShadow: SHADOW}, 12.70);
+      tl.set("#w42", {backgroundColor: "#ffffff", color: "#0b0b0b", textShadow: "none"}, 12.70);
+      tl.fromTo("#w42", {scale: 0.92}, {scale: 1.06, duration: 0.09, ease: "power2.out"}, 12.70);
+      tl.to("#w42", {scale: 1, duration: 0.08}, 12.79);
+      tl.set("#w42", {backgroundColor: "rgba(255,255,255,0)", color: "#ffffff", textShadow: SHADOW}, 12.84);
+      tl.set("#w43", {backgroundColor: "#ffffff", color: "#0b0b0b", textShadow: "none"}, 12.84);
+      tl.fromTo("#w43", {scale: 0.92}, {scale: 1.06, duration: 0.09, ease: "power2.out"}, 12.84);
+      tl.to("#w43", {scale: 1, duration: 0.08}, 12.93);
+      tl.set("#w43", {backgroundColor: "rgba(255,255,255,0)", color: "#ffffff", textShadow: SHADOW}, 13.10);
+      tl.set("#w44", {backgroundColor: "#ffffff", color: "#0b0b0b", textShadow: "none"}, 13.10);
+      tl.fromTo("#w44", {scale: 0.92}, {scale: 1.06, duration: 0.09, ease: "power2.out"}, 13.10);
+      tl.to("#w44", {scale: 1, duration: 0.08}, 13.19);
+      tl.set("#w44", {backgroundColor: "rgba(255,255,255,0)", color: "#ffffff", textShadow: SHADOW}, 13.38);
+      tl.fromTo("#cap13", {y: 24, opacity: 0}, {y: 0, opacity: 1, duration: 0.14, ease: "back.out(2)"}, 13.38);
+      tl.set("#w45", {backgroundColor: "#ffffff", color: "#0b0b0b", textShadow: "none"}, 13.38);
+      tl.fromTo("#w45", {scale: 0.92}, {scale: 1.06, duration: 0.09, ease: "power2.out"}, 13.38);
+      tl.to("#w45", {scale: 1, duration: 0.08}, 13.47);
+      tl.set("#w45", {backgroundColor: "rgba(255,255,255,0)", color: "#ffffff", textShadow: SHADOW}, 13.88);
+      tl.set("#w46", {backgroundColor: "#ffffff", color: "#0b0b0b", textShadow: "none"}, 13.88);
+      tl.fromTo("#w46", {scale: 0.92}, {scale: 1.06, duration: 0.09, ease: "power2.out"}, 13.88);
+      tl.to("#w46", {scale: 1, duration: 0.08}, 13.97);
+      tl.set("#w46", {backgroundColor: "rgba(255,255,255,0)", color: "#ffffff", textShadow: SHADOW}, 14.36);
+      tl.set("#w47", {backgroundColor: "#ffffff", color: "#0b0b0b", textShadow: "none"}, 14.36);
+      tl.fromTo("#w47", {scale: 0.92}, {scale: 1.06, duration: 0.09, ease: "power2.out"}, 14.36);
+      tl.to("#w47", {scale: 1, duration: 0.08}, 14.45);
+      tl.set("#w47", {backgroundColor: "rgba(255,255,255,0)", color: "#ffffff", textShadow: SHADOW}, 14.44);
+      tl.fromTo("#cap14", {y: 24, opacity: 0}, {y: 0, opacity: 1, duration: 0.14, ease: "back.out(2)"}, 14.44);
+      tl.set("#w48", {backgroundColor: "#ffffff", color: "#0b0b0b", textShadow: "none"}, 14.44);
+      tl.fromTo("#w48", {scale: 0.92}, {scale: 1.06, duration: 0.09, ease: "power2.out"}, 14.44);
+      tl.to("#w48", {scale: 1, duration: 0.08}, 14.53);
+      tl.set("#w48", {backgroundColor: "rgba(255,255,255,0)", color: "#ffffff", textShadow: SHADOW}, 14.88);
+      tl.set("#w49", {backgroundColor: "#ffffff", color: "#0b0b0b", textShadow: "none"}, 14.88);
+      tl.fromTo("#w49", {scale: 0.92}, {scale: 1.06, duration: 0.09, ease: "power2.out"}, 14.88);
+      tl.to("#w49", {scale: 1, duration: 0.08}, 14.97);
+      tl.set("#w49", {backgroundColor: "rgba(255,255,255,0)", color: "#ffffff", textShadow: SHADOW}, 14.98);
+      tl.set("#w50", {backgroundColor: "#ffffff", color: "#0b0b0b", textShadow: "none"}, 14.98);
+      tl.fromTo("#w50", {scale: 0.92}, {scale: 1.06, duration: 0.09, ease: "power2.out"}, 14.98);
+      tl.to("#w50", {scale: 1, duration: 0.08}, 15.07);
+      tl.set("#w50", {backgroundColor: "rgba(255,255,255,0)", color: "#ffffff", textShadow: SHADOW}, 15.30);
+      tl.fromTo("#cap15", {y: 24, opacity: 0}, {y: 0, opacity: 1, duration: 0.14, ease: "back.out(2)"}, 15.30);
+      tl.set("#w51", {backgroundColor: "#ffffff", color: "#0b0b0b", textShadow: "none"}, 15.30);
+      tl.fromTo("#w51", {scale: 0.92}, {scale: 1.06, duration: 0.09, ease: "power2.out"}, 15.30);
+      tl.to("#w51", {scale: 1, duration: 0.08}, 15.39);
+      tl.set("#w51", {backgroundColor: "rgba(255,255,255,0)", color: "#ffffff", textShadow: SHADOW}, 15.55);
+      tl.set("#w52", {backgroundColor: "#ffffff", color: "#0b0b0b", textShadow: "none"}, 15.55);
+      tl.fromTo("#w52", {scale: 0.92}, {scale: 1.06, duration: 0.09, ease: "power2.out"}, 15.55);
+      tl.to("#w52", {scale: 1, duration: 0.08}, 15.64);
+      tl.set("#w52", {backgroundColor: "rgba(255,255,255,0)", color: "#ffffff", textShadow: SHADOW}, 15.80);
+      tl.set("#w53", {backgroundColor: "#ffffff", color: "#0b0b0b", textShadow: "none"}, 15.80);
+      tl.fromTo("#w53", {scale: 0.92}, {scale: 1.06, duration: 0.09, ease: "power2.out"}, 15.80);
+      tl.to("#w53", {scale: 1, duration: 0.08}, 15.89);
+      tl.set("#w53", {backgroundColor: "rgba(255,255,255,0)", color: "#ffffff", textShadow: SHADOW}, 16.32);
+      tl.fromTo("#cap16", {y: 24, opacity: 0}, {y: 0, opacity: 1, duration: 0.14, ease: "back.out(2)"}, 16.70);
+      tl.set("#w54", {backgroundColor: "#ffffff", color: "#0b0b0b", textShadow: "none"}, 16.70);
+      tl.fromTo("#w54", {scale: 0.92}, {scale: 1.06, duration: 0.09, ease: "power2.out"}, 16.70);
+      tl.to("#w54", {scale: 1, duration: 0.08}, 16.79);
+      tl.set("#w54", {backgroundColor: "rgba(255,255,255,0)", color: "#ffffff", textShadow: SHADOW}, 17.30);
+      tl.set("#w55", {backgroundColor: "#ffffff", color: "#0b0b0b", textShadow: "none"}, 17.30);
+      tl.fromTo("#w55", {scale: 0.92}, {scale: 1.06, duration: 0.09, ease: "power2.out"}, 17.30);
+      tl.to("#w55", {scale: 1, duration: 0.08}, 17.39);
+      tl.set("#w55", {backgroundColor: "rgba(255,255,255,0)", color: "#ffffff", textShadow: SHADOW}, 17.72);
+      tl.set("#w56", {backgroundColor: "#ffffff", color: "#0b0b0b", textShadow: "none"}, 17.72);
+      tl.fromTo("#w56", {scale: 0.92}, {scale: 1.06, duration: 0.09, ease: "power2.out"}, 17.72);
+      tl.to("#w56", {scale: 1, duration: 0.08}, 17.81);
+      tl.set("#w56", {backgroundColor: "rgba(255,255,255,0)", color: "#ffffff", textShadow: SHADOW}, 17.86);
+      tl.set("#w57", {backgroundColor: "#ffffff", color: "#0b0b0b", textShadow: "none"}, 17.86);
+      tl.fromTo("#w57", {scale: 0.92}, {scale: 1.06, duration: 0.09, ease: "power2.out"}, 17.86);
+      tl.to("#w57", {scale: 1, duration: 0.08}, 17.95);
+      tl.set("#w57", {backgroundColor: "rgba(255,255,255,0)", color: "#ffffff", textShadow: SHADOW}, 18.14);
+      tl.fromTo("#cap17", {y: 24, opacity: 0}, {y: 0, opacity: 1, duration: 0.14, ease: "back.out(2)"}, 18.14);
+      tl.set("#w58", {backgroundColor: "#ffffff", color: "#0b0b0b", textShadow: "none"}, 18.14);
+      tl.fromTo("#w58", {scale: 0.92}, {scale: 1.06, duration: 0.09, ease: "power2.out"}, 18.14);
+      tl.to("#w58", {scale: 1, duration: 0.08}, 18.23);
+      tl.set("#w58", {backgroundColor: "rgba(255,255,255,0)", color: "#ffffff", textShadow: SHADOW}, 18.22);
+      tl.set("#w59", {backgroundColor: "#ffffff", color: "#0b0b0b", textShadow: "none"}, 18.22);
+      tl.fromTo("#w59", {scale: 0.92}, {scale: 1.06, duration: 0.09, ease: "power2.out"}, 18.22);
+      tl.to("#w59", {scale: 1, duration: 0.08}, 18.31);
+      tl.set("#w59", {backgroundColor: "rgba(255,255,255,0)", color: "#ffffff", textShadow: SHADOW}, 18.38);
+      tl.set("#w60", {backgroundColor: "#ffffff", color: "#0b0b0b", textShadow: "none"}, 18.38);
+      tl.fromTo("#w60", {scale: 0.92}, {scale: 1.06, duration: 0.09, ease: "power2.out"}, 18.38);
+      tl.to("#w60", {scale: 1, duration: 0.08}, 18.47);
+      tl.set("#w60", {backgroundColor: "rgba(255,255,255,0)", color: "#ffffff", textShadow: SHADOW}, 18.94);
+      tl.fromTo("#cap18", {y: 24, opacity: 0}, {y: 0, opacity: 1, duration: 0.14, ease: "back.out(2)"}, 18.94);
+      tl.set("#w61", {backgroundColor: "#ffffff", color: "#0b0b0b", textShadow: "none"}, 18.94);
+      tl.fromTo("#w61", {scale: 0.92}, {scale: 1.06, duration: 0.09, ease: "power2.out"}, 18.94);
+      tl.to("#w61", {scale: 1, duration: 0.08}, 19.03);
+      tl.set("#w61", {backgroundColor: "rgba(255,255,255,0)", color: "#ffffff", textShadow: SHADOW}, 19.14);
+      tl.set("#w62", {backgroundColor: "#ffffff", color: "#0b0b0b", textShadow: "none"}, 19.14);
+      tl.fromTo("#w62", {scale: 0.92}, {scale: 1.06, duration: 0.09, ease: "power2.out"}, 19.14);
+      tl.to("#w62", {scale: 1, duration: 0.08}, 19.23);
+      tl.set("#w62", {backgroundColor: "rgba(255,255,255,0)", color: "#ffffff", textShadow: SHADOW}, 19.34);
+      tl.set("#w63", {backgroundColor: "#ffffff", color: "#0b0b0b", textShadow: "none"}, 19.34);
+      tl.fromTo("#w63", {scale: 0.92}, {scale: 1.06, duration: 0.09, ease: "power2.out"}, 19.34);
+      tl.to("#w63", {scale: 1, duration: 0.08}, 19.43);
+      tl.set("#w63", {backgroundColor: "rgba(255,255,255,0)", color: "#ffffff", textShadow: SHADOW}, 19.56);
+      tl.set("#w64", {backgroundColor: "#ffffff", color: "#0b0b0b", textShadow: "none"}, 19.56);
+      tl.fromTo("#w64", {scale: 0.92}, {scale: 1.06, duration: 0.09, ease: "power2.out"}, 19.56);
+      tl.to("#w64", {scale: 1, duration: 0.08}, 19.65);
+      tl.set("#w64", {backgroundColor: "rgba(255,255,255,0)", color: "#ffffff", textShadow: SHADOW}, 19.84);
+      tl.fromTo("#cap19", {y: 24, opacity: 0}, {y: 0, opacity: 1, duration: 0.14, ease: "back.out(2)"}, 19.84);
+      tl.set("#w65", {backgroundColor: "#ffffff", color: "#0b0b0b", textShadow: "none"}, 19.84);
+      tl.fromTo("#w65", {scale: 0.92}, {scale: 1.06, duration: 0.09, ease: "power2.out"}, 19.84);
+      tl.to("#w65", {scale: 1, duration: 0.08}, 19.93);
+      tl.set("#w65", {backgroundColor: "rgba(255,255,255,0)", color: "#ffffff", textShadow: SHADOW}, 20.21);
+      tl.set("#w66", {backgroundColor: "#ffffff", color: "#0b0b0b", textShadow: "none"}, 20.21);
+      tl.fromTo("#w66", {scale: 0.92}, {scale: 1.06, duration: 0.09, ease: "power2.out"}, 20.21);
+      tl.to("#w66", {scale: 1, duration: 0.08}, 20.30);
+      tl.set("#w66", {backgroundColor: "rgba(255,255,255,0)", color: "#ffffff", textShadow: SHADOW}, 20.43);
+      tl.set("#w67", {backgroundColor: "#ffffff", color: "#0b0b0b", textShadow: "none"}, 20.43);
+      tl.fromTo("#w67", {scale: 0.92}, {scale: 1.06, duration: 0.09, ease: "power2.out"}, 20.43);
+      tl.to("#w67", {scale: 1, duration: 0.08}, 20.52);
+      tl.set("#w67", {backgroundColor: "rgba(255,255,255,0)", color: "#ffffff", textShadow: SHADOW}, 20.77);
+      tl.fromTo("#stk0", {scale: 0, rotation: -18}, {scale: 1, rotation: 12, duration: 0.32, ease: "back.out(3)"}, 8.62);
+      tl.to("#stk0", {scale: 0, opacity: 0, duration: 0.18, ease: "power2.in"}, 9.42);
+      tl.fromTo("#stk1", {scale: 0, rotation: -38}, {scale: 1, rotation: -8, duration: 0.32, ease: "back.out(3)"}, 11.90);
+      tl.to("#stk1", {scale: 0, opacity: 0, duration: 0.18, ease: "power2.in"}, 12.70);
+      tl.fromTo("#stk2", {scale: 0, rotation: -20}, {scale: 1, rotation: 10, duration: 0.32, ease: "back.out(3)"}, 13.12);
+      tl.to("#stk2", {scale: 0, opacity: 0, duration: 0.18, ease: "power2.in"}, 13.92);
+      tl.fromTo("#stk3", {scale: 0, rotation: -40}, {scale: 1, rotation: -10, duration: 0.32, ease: "back.out(3)"}, 15.82);
+      tl.to("#stk3", {scale: 0, opacity: 0, duration: 0.18, ease: "power2.in"}, 16.62);
+
+      // HOOK title — on-screen text from the script
+      tl.fromTo("#hook .l1", {y: -40, opacity: 0}, {y: 0, opacity: 1, duration: 0.3, ease: "back.out(2)"}, 0.06);
+      tl.fromTo("#hook .l2", {scale: 0.6, opacity: 0}, {scale: 1, opacity: 1, duration: 0.32, ease: "back.out(2.5)"}, 0.32);
+      tl.to("#hook .arrow", {y: 14, duration: 0.35, repeat: 9, yoyo: true, ease: "sine.inOut"}, 0.6);
+      tl.to("#hook", {y: -30, opacity: 0, duration: 0.2, ease: "power2.in"}, 4.18);
+
+      // numbered book chips (style taken from the reference image)
+      tl.fromTo("#chip1", {x: -700, opacity: 0}, {x: 0, opacity: 1, duration: 0.38, ease: "power3.out"}, 4.50);
+      tl.fromTo("#chip1 .tag", {opacity: 0}, {opacity: 1, duration: 0.3}, 4.80);
+      tl.to("#chip1", {x: -700, opacity: 0, duration: 0.25, ease: "power2.in"}, 12.20);
+      tl.fromTo("#chip2", {x: 700, opacity: 0}, {x: 0, opacity: 1, duration: 0.38, ease: "power3.out"}, 12.56);
+      tl.fromTo("#chip2 .tag", {opacity: 0}, {opacity: 1, duration: 0.3}, 12.86);
+      tl.to("#chip2", {x: 700, opacity: 0, duration: 0.25, ease: "power2.in"}, 16.02);
+
+      // CTA — yellow bag + bouncing arrow toward TikTok's basket (bottom-left)
+      tl.fromTo("#bag", {scale: 0, rotation: -25}, {scale: 1, rotation: 0, duration: 0.42, ease: "back.out(2.6)"}, 17.30);
+      tl.to("#bag .bagicon", {rotation: 8, duration: 0.12, repeat: 5, yoyo: true, ease: "sine.inOut"}, 18.38);
+      tl.to("#bag .down", {y: 18, duration: 0.3, repeat: 7, yoyo: true, ease: "sine.inOut"}, 17.7);
+      tl.fromTo("#bag .glow", {scale: 0.8, opacity: 0.9}, {scale: 1.6, opacity: 0, duration: 0.7, ease: "power2.out"}, 18.40);
+
+      // final pick-one card
+      tl.fromTo("#pick", {opacity: 0}, {opacity: 1, duration: 0.2}, 18.94);
+      tl.fromTo("#pick .row1", {x: -700}, {x: 0, duration: 0.34, ease: "power3.out"}, 19.00);
+      tl.fromTo("#pick .row2", {x: 700}, {x: 0, duration: 0.34, ease: "power3.out"}, 19.16);
+      tl.fromTo("#pick .ask", {scale: 0.5, opacity: 0}, {scale: 1, opacity: 1, duration: 0.3, ease: "back.out(2.5)"}, 19.84);
+      tl.to("#pick .row1", {borderColor: "#F5C518", duration: 0.2, repeat: 3, yoyo: true}, 19.9);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>
