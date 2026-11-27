@@ -5,9 +5,13 @@ description: Edit a short TikTok/Reels affiliate video (product held to camera +
 
 # Affiliate video edit — house style
 
-Reference edit: `video/` + `scripts/build_composition.py` in this repo ("buku final", 2 books, 20.8s).
-Copy that project as the starting point for a new video; change the tables at the top of
-`build_composition.py` (SHOTS, GROUPS, STICKERS, DURATION) and the HTML text, then re-run it.
+Each video is a folder under `videos/<name>/` with an `edit.json` (shots, caption groups, hook text,
+product titles, stickers, ending), `data/transcript.json`, `assets/vo_final.wav`, footage and `preview.html`.
+Build it with `python3 scripts/build_video.py videos/<name>`. Copy `videos/luqfa-lotion/` as the template.
+(The first edit, "buku final", lives in `video/` with its own older `scripts/build_composition.py`.)
+If the user gives no on-screen hook text, propose one from the spoken hook and flag it.
+Footage may be saved landscape without a rotation flag even though it was shot portrait — check the
+contact sheet and add `transpose=1` when the table is on the right.
 
 The user writes in Malay (mixed with English). Reply the same way.
 
@@ -66,7 +70,7 @@ The user writes in Malay (mixed with English). Reply the same way.
    phone clips carry rotation −90 → transcode upright 1080×1920 for the project, 540×960 proxies for preview).
 2. Contact sheets (1 fps with timestamps) to pick shots.
 3. Clean VO → cut pauses → transcribe → caption groups.
-4. Fill `build_composition.py` tables, build, `npx hyperframes lint .`, `npx hyperframes snapshot --at …` and look.
+4. Write `edit.json`, run `scripts/build_video.py`, `npx hyperframes lint .`, `npx hyperframes snapshot --at …` and look.
 5. Publish the preview (`video/preview.html` + composition as `composition.html` + proxies) as a private
    Artifact; wait for the user's OK.
 6. Only on approval: `npx hyperframes render -o "<name>.mp4" -f 30 -q delivery`, check it, send the file.

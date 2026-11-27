@@ -5,3 +5,6 @@ video/assets/footage/
 video/.hyperframes/
 __pycache__/
 out/
+raw2/
+work2/
+videos/*/assets/footage/
