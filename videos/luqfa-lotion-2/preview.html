@@ -1,0 +1,300 @@
+<title>Luqfa Lotion 2 Preview</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+  /* Layout: editor bay — phone-sized player on the left, transcript + edit log on the right; stacks on phones.
+     Single dark look on purpose (an editing monitor), every colour still a token. */
+  :root {
+    --bg: #121110;
+    --panel: #1c1a18;
+    --line: #2e2b27;
+    --fg: #f2efe9;
+    --muted: #a39d93;
+    --accent: #f5c518;
+    --accent-ink: #141210;
+    --font-display: "Poppins", "Segoe UI", system-ui, sans-serif;
+    --font-body: "Inter", system-ui, -apple-system, sans-serif;
+    --font-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  body { background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 15px; line-height: 1.5;
+    padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 20px 40px; }
+  .wrap { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 400px) minmax(0, 1fr); gap: 28px; align-items: start; }
+  @media (max-width: 820px) { .wrap { grid-template-columns: minmax(0, 1fr); } .stage { max-width: 380px; margin: 0 auto; width: 100%; } }
+
+  header { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px 16px; }
+  h1 { font-family: var(--font-display); font-weight: 800; font-size: 1.6rem; margin: 0; letter-spacing: -0.01em; text-wrap: balance; }
+  .pill { font-family: var(--font-mono); font-size: 12px; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--accent); color: var(--accent); letter-spacing: .04em; text-transform: uppercase; }
+  .sub { color: var(--muted); margin: 0; flex-basis: 100%; }
+
+  .stage { position: relative; }
+  .screen { position: relative; width: 100%; aspect-ratio: 9 / 16; max-width: 100%; border-radius: 22px; overflow: hidden; background: #000; border: 1px solid var(--line); }
+  .screen iframe { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; border: 0; transform-origin: 0 0; pointer-events: none; }
+  .bigplay { position: absolute; inset: 0; display: grid; place-items: center; background: rgba(0,0,0,.35); border: 0; cursor: pointer; color: var(--fg); font: 600 15px var(--font-body); }
+  .bigplay span { display: grid; place-items: center; gap: 10px; }
+  .bigplay svg { width: 74px; height: 74px; }
+  .bigplay:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .loading { position: absolute; inset: auto 0 12px; text-align: center; font-size: 13px; color: var(--muted); }
+
+  /* TikTok UI guide */
+  .guide { position: absolute; inset: 0; pointer-events: none; }
+  .guide div { position: absolute; background: rgba(255, 60, 90, .22); border: 1px dashed rgba(255, 90, 120, .8); }
+  .guide .g-right { right: 0; top: 46%; width: 15%; height: 40%; }
+  .guide .g-bottom { left: 0; right: 15%; bottom: 0; height: 18%; }
+  .guide .g-top { left: 0; right: 0; top: 0; height: 7%; }
+
+  .controls { display: flex; align-items: center; gap: 10px; margin-top: 12px; }
+  .controls button { flex: none; width: 42px; height: 42px; border-radius: 50%; border: 0; background: var(--accent); color: var(--accent-ink); cursor: pointer; display: grid; place-items: center; }
+  .controls button svg { width: 18px; height: 18px; }
+  .controls input[type=range] { flex: 1; min-width: 0; accent-color: var(--accent); }
+  .time { font-family: var(--font-mono); font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; min-width: 92px; text-align: right; }
+  .toggles { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 10px; font-size: 13px; color: var(--muted); }
+  .toggles label { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
+
+  section { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 18px 20px; min-width: 0; }
+  section + section { margin-top: 18px; }
+  h2 { font-family: var(--font-display); font-size: 1.05rem; font-weight: 600; margin: 0 0 12px; }
+  .lines { display: grid; gap: 4px; }
+  .line { display: grid; grid-template-columns: 52px minmax(0, 1fr); gap: 10px; align-items: baseline; padding: 6px 8px; border-radius: 10px; cursor: pointer; border: 0; background: none; color: inherit; font: inherit; text-align: left; }
+  .line:hover { background: rgba(255,255,255,.04); }
+  .line .ts { font-family: var(--font-mono); font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .line .tx { font-family: var(--font-display); font-weight: 600; font-size: 15px; }
+  .line .w { border-radius: 5px; padding: 0 2px; }
+  .line .w.on { background: var(--fg); color: var(--bg); }
+  .line.on .ts { color: var(--accent); }
+  .sec { font-family: var(--font-mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin: 10px 0 2px 8px; }
+  .sec:first-child { margin-top: 0; }
+
+  ul.log { margin: 0; padding-left: 18px; display: grid; gap: 8px; color: var(--fg); }
+  ul.log li::marker { color: var(--accent); }
+  ul.log b { font-weight: 600; }
+  .note { color: var(--muted); font-size: 13.5px; margin: 12px 0 0; }
+  @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>Luqfa PDRN Lotion — versi 2 (19.23)</h1>
+    <span class="pill">Preview · belum render</span>
+    <p class="sub">Composition HyperFrames yang sama main terus dalam browser (footage resolusi rendah untuk preview). Tekan main dengan bunyi on.</p>
+  </header>
+
+  <div class="stage">
+    <div class="screen" id="screen">
+      <iframe id="comp" src="index.html" title="Composition HyperFrames" scrolling="no"></iframe>
+      <div class="guide" id="guide" hidden><div class="g-top"></div><div class="g-right"></div><div class="g-bottom"></div></div>
+      <button class="bigplay" id="bigplay" aria-label="Main preview">
+        <span><svg viewBox="0 0 80 80" aria-hidden="true"><circle cx="40" cy="40" r="38" fill="#f5c518"/><path d="M33 26 L56 40 L33 54 Z" fill="#141210"/></svg>Main dengan bunyi</span>
+      </button>
+      <div class="loading" id="loading">Memuatkan audio dan footage…</div>
+    </div>
+    <div class="controls">
+      <button id="pp" aria-label="Main / jeda"><svg viewBox="0 0 20 20" id="ppicon" aria-hidden="true"><path d="M5 3 L17 10 L5 17 Z" fill="currentColor"/></svg></button>
+      <input type="range" id="scrub" min="0" max="17.87" step="0.01" value="0" aria-label="Kedudukan">
+      <span class="time" id="time">0:00.0 / 0:17.9</span>
+    </div>
+    <div class="toggles">
+      <label><input type="checkbox" id="tgGuide"> Tunjuk kawasan UI TikTok</label>
+      <label><input type="checkbox" id="tgLoop"> Ulang</label>
+    </div>
+  </div>
+
+  <div>
+    <section>
+      <h2>Transcript (klik untuk lompat)</h2>
+      <div class="lines" id="lines"></div>
+    </section>
+    <section>
+      <h2>Apa yang dah diedit</h2>
+      <ul class="log">
+        <li><b>Audio 19.23 dibersihkan:</b> setting sama (−14 LUFS, denoise, de-esser). Pause dibuang: 20.3s → 17.9s.</li>
+        <li><b>Subtitle ikut skrip anda</b> — Whisper dengar perkataan sama dengan skrip.</li>
+        <li><b>Shot berbeza dari versi 1:</b> botol masuk frame masa "boleh tengok yang ni", logo timbul masa nama produk, penutup dibuka masa "formulated with Salmon DNA", flip cap + sapu masa "daily body care routine", tangan masa "honeydew scent".</li>
+        <li><b>Gaya sama:</b> subtitle putih → hitam atas pil putih, nama produk teks putih ringkas, emoji 💧 🧬 🍈, tiada sound effect, tiada logo.</li>
+      </ul>
+      <p class="note">Teks hook "tengah cari body lotion? / tengok yang ni" saya cadangkan dari ayat pembuka skrip — beritahu kalau nak tukar.</p>
+    </section>
+  </div>
+</div>
+
+<script>
+(() => {
+  let DUR = 17.87;
+  const iframe = document.getElementById("comp");
+  const screen = document.getElementById("screen");
+  const scrub = document.getElementById("scrub");
+  const timeEl = document.getElementById("time");
+  const bigplay = document.getElementById("bigplay");
+  const loading = document.getElementById("loading");
+  const ppicon = document.getElementById("ppicon");
+  const PLAY = '<path d="M5 3 L17 10 L5 17 Z" fill="currentColor"/>';
+  const PAUSE = '<rect x="4" y="3" width="4.5" height="14" rx="1" fill="currentColor"/><rect x="11.5" y="3" width="4.5" height="14" rx="1" fill="currentColor"/>';
+
+  let doc, tl, clips = [], videos = [], audioClips = [], words = [];
+  let actx = null, master, sfxGain, playing = false, t = 0, startCtx = 0, startT = 0, sources = [];
+  const fmt = s => `${Math.floor(s / 60)}:${(s % 60).toFixed(1).padStart(4, "0")}`;
+
+  function fit() { iframe.style.transform = `scale(${screen.clientWidth / 1080})`; }
+  new ResizeObserver(fit).observe(screen); fit();
+
+  // ---- composition hookup
+  iframe.addEventListener("load", async () => {
+    doc = iframe.contentDocument;
+    const win = iframe.contentWindow;
+    for (let i = 0; i < 100 && !(win.__timelines && win.__timelines.main); i++) await new Promise(r => setTimeout(r, 50));
+    tl = win.__timelines.main;
+    clips = [...doc.querySelectorAll("#root [data-start]")];
+    videos = clips.filter(el => el.tagName === "VIDEO").map(el => ({ el, s: +el.dataset.start, d: +el.dataset.duration, ms: +el.dataset.mediaStart || 0 }));
+    const auds = clips.filter(el => el.tagName === "AUDIO");
+    audioClips = auds.map(el => ({ url: new URL(el.getAttribute("src"), iframe.src).href, s: +el.dataset.start, d: +el.dataset.duration,
+      vol: +(el.dataset.volume || 1), sfx: el.id !== "vo", buf: null }));
+    auds.forEach(el => { el.removeAttribute("src"); el.load(); });  // audio is mixed in this page instead
+    videos.forEach(v => { v.el.muted = true; v.el.playsInline = true; });
+    render(0);
+    preloadAudio();
+  });
+
+  async function preloadAudio() {
+    const cache = {};
+    await Promise.all(audioClips.map(async c => {
+      cache[c.url] = cache[c.url] || fetch(c.url).then(r => r.arrayBuffer());
+      c.raw = await cache[c.url];
+    }));
+    loading.textContent = "";
+  }
+  async function ensureCtx() {
+    if (!actx) {
+      actx = new (window.AudioContext || window.webkitAudioContext)();
+      master = actx.createGain(); master.connect(actx.destination);
+      sfxGain = actx.createGain(); sfxGain.connect(master);
+    }
+    if (actx.state === "suspended") await actx.resume();
+    const decoded = {};
+    for (const c of audioClips) {
+      if (c.buf || !c.raw) continue;
+      decoded[c.url] = decoded[c.url] || actx.decodeAudioData(c.raw.slice(0));
+      c.buf = await decoded[c.url];
+    }
+  }
+
+  // ---- transport
+  function stopSources() { sources.forEach(s => { try { s.stop(); } catch (e) {} }); sources = []; }
+  function scheduleAudio(from) {
+    stopSources();
+    const now = actx.currentTime + 0.05;
+    startCtx = now; startT = from;
+    for (const c of audioClips) {
+      if (!c.buf || c.s + c.d <= from) continue;
+      const src = actx.createBufferSource(); src.buffer = c.buf;
+      const g = actx.createGain(); g.gain.value = Math.min(c.vol, 1);
+      src.connect(g); g.connect(c.sfx ? sfxGain : master);
+      const off = Math.max(0, from - c.s);
+      src.start(now + Math.max(0, c.s - from), off, c.d - off);
+      sources.push(src);
+    }
+  }
+  async function play() {
+    if (!tl) return;
+    await ensureCtx();
+    if (t >= DUR - 0.05) t = 0;
+    scheduleAudio(t);
+    playing = true; bigplay.hidden = true; ppicon.innerHTML = PAUSE;
+    requestAnimationFrame(tick);
+  }
+  function pause() {
+    playing = false; stopSources(); ppicon.innerHTML = PLAY;
+    videos.forEach(v => v.el.pause());
+  }
+  function seek(to, keep) {
+    t = Math.max(0, Math.min(DUR, to));
+    if (playing && keep !== false) scheduleAudio(t);
+    render(t);
+  }
+  function tick() {
+    if (!playing) return;
+    t = startT + (actx.currentTime - startCtx);
+    if (t >= DUR) {
+      if (document.getElementById("tgLoop").checked) { seek(0); }
+      else { t = DUR; render(t); pause(); return; }
+    }
+    render(Math.max(t, 0));
+    requestAnimationFrame(tick);
+  }
+
+  // ---- draw one moment of the composition (what the HyperFrames runtime does when it seeks)
+  function render(time) {
+    if (!tl) return;
+    tl.seek(time, false);
+    for (const el of clips) {
+      const s = +el.dataset.start, d = +el.dataset.duration;
+      el.style.visibility = time >= s && time < s + d ? "visible" : "hidden";
+    }
+    for (const v of videos) {
+      const on = time >= v.s && time < v.s + v.d;
+      const want = v.ms + (time - v.s);
+      if (on) {
+        if (playing) {
+          if (v.el.paused) v.el.play().catch(() => {});
+          if (Math.abs(v.el.currentTime - want) > 0.25) v.el.currentTime = want;
+        } else {
+          if (!v.el.paused) v.el.pause();
+          if (Math.abs(v.el.currentTime - want) > 0.03) v.el.currentTime = want;
+        }
+      } else {
+        if (!v.el.paused) v.el.pause();
+        if (time < v.s && v.s - time < 1.5 && Math.abs(v.el.currentTime - v.ms) > 0.1) v.el.currentTime = v.ms;  // pre-roll
+      }
+    }
+    scrub.value = time.toFixed(2);
+    timeEl.textContent = `${fmt(time)} / ${fmt(DUR)}`;
+    highlight(time);
+  }
+
+  // ---- transcript panel
+  const SECTIONS = [[0, "Hook"], [4.30, "Produk"], [11.00, "Daily routine"], [14.22, "Honeydew scent"]];
+  let GROUPS = [];
+  let wordEls = [], lineEls = [];
+  Promise.all([fetch("edit.json").then(r => r.json()), fetch("data/transcript.json").then(r => r.json())]).then(([cfg, ws]) => {
+    GROUPS = cfg.groups; DUR = cfg.duration; scrub.max = DUR;
+    words = ws;
+    const box = document.getElementById("lines");
+    let si = 0;
+    GROUPS.forEach(([a, b]) => {
+      const st = ws[a].s;
+      while (si < SECTIONS.length && SECTIONS[si][0] <= st + 0.2) {
+        const h = document.createElement("div"); h.className = "sec"; h.textContent = SECTIONS[si][1]; box.appendChild(h); si++;
+      }
+      const btn = document.createElement("button"); btn.className = "line"; btn.type = "button";
+      btn.innerHTML = `<span class="ts">${fmt(st)}</span><span class="tx"></span>`;
+      const tx = btn.querySelector(".tx");
+      for (let k = a; k < b; k++) {
+        const sp = document.createElement("span"); sp.className = "w"; sp.textContent = ws[k].w;
+        tx.appendChild(sp); tx.appendChild(document.createTextNode(" "));
+        wordEls[k] = sp;
+      }
+      btn.addEventListener("click", () => seek(st));
+      box.appendChild(btn); lineEls.push({ el: btn, a, b });
+    });
+    highlight(t);
+  });
+  function highlight(time) {
+    if (!words.length) return;
+    let cur = -1;
+    for (let k = 0; k < words.length; k++) if (time >= words[k].s) cur = k;
+    if (cur >= 0 && time > words[cur].e + 0.35) cur = -1;
+    wordEls.forEach((el, k) => el && el.classList.toggle("on", k === cur));
+    lineEls.forEach(l => l.el.classList.toggle("on", cur >= l.a && cur < l.b));
+  }
+
+  // ---- UI wiring
+  bigplay.addEventListener("click", play);
+  document.getElementById("pp").addEventListener("click", () => playing ? pause() : play());
+  scrub.addEventListener("input", () => seek(+scrub.value));
+  document.getElementById("tgGuide").addEventListener("change", e => { document.getElementById("guide").hidden = !e.target.checked; });
+  document.addEventListener("keydown", e => {
+    if (e.code === "Space" && e.target.tagName !== "INPUT") { e.preventDefault(); playing ? pause() : play(); }
+  });
+})();
+</script>
