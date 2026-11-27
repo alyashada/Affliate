@@ -10,3 +10,8 @@ HyperFrames edit of a 20.8s affiliate video (How to Talk to Anyone + The Psychol
 - `video/assets/proxy/` — 540x960 preview proxies. Full-res footage: `scripts/fetch_footage.sh`.
 
 Render locally when approved (free, no cloud credits): `cd video && npx hyperframes render -o out.mp4`.
+
+## House style
+
+The editing style is saved as a Claude Code skill: `.claude/skills/affiliate-video-edit/SKILL.md`.
+Ask for a new affiliate video "same style as buku final" and it is applied automatically.
