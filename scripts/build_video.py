@@ -85,11 +85,13 @@ def build(project: Path):
             js.append(f'tl.fromTo("#pick .row{k}", {{y: 16, opacity: 0}}, {{y: 0, opacity: 1, duration: 0.35, ease: "power2.out"}}, {ending["start"] + 0.02 + 0.18 * k:.2f});')
 
     # ---- emoji stickers
-    for i, (t, e, x, y, r) in enumerate(stickers):
+    for i, st in enumerate(stickers):
+        t, e, x, y, r = st[:5]
+        hold = st[5] if len(st) > 5 else 0.8  # optional: seconds before it pops out (for quick lists)
         body.append(f'      <div id="stk{i}" class="clip sticker" data-start="{t:.2f}" data-duration="1.00" '
-                    f'data-track-index="3" style="left:{x}px;top:{y}px">{e}</div>')
+                    f'data-track-index="3" style="left:{x}px;top:{y}px">{e}</div>'.replace('data-duration="1.00"', f'data-duration="{hold + 0.2:.2f}"'))
         js.append(f'tl.fromTo("#stk{i}", {{scale: 0, rotation: {r - 30}}}, {{scale: 1, rotation: {r}, duration: 0.32, ease: "back.out(3)"}}, {t:.2f});')
-        js.append(f'tl.to("#stk{i}", {{scale: 0, opacity: 0, duration: 0.18, ease: "power2.in"}}, {t + 0.8:.2f});')
+        js.append(f'tl.to("#stk{i}", {{scale: 0, opacity: 0, duration: 0.18, ease: "power2.in"}}, {t + hold:.2f});')
 
     # ---- captions: word-by-word, spoken word black on a white pill
     starts = [w["s"] for w in words]
