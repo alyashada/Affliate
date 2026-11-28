@@ -23,7 +23,7 @@ Ask for a new affiliate video "same style as buku final" and it is applied autom
 | `video/` (buku final) | 26 Nov 20.47 | Rendered → `buku final.mp4` | https://claude.ai/artifact/K2UJKvpqjk86v3Vz7iYnCL |
 | `videos/luqfa-lotion/` | 27 Nov 19.22 | Rendered → `luqfa final.mp4` | https://claude.ai/artifact/H8thh8S8gzpENpcsdSmppE |
 | `videos/luqfa-lotion-2/` | 27 Nov 19.23 | **Preview only — waiting for the user's go-ahead to render** | https://claude.ai/artifact/XGZhDYjMoAWKw8VHPXakQm |
-| `videos/scentify/` | 28 Nov 14.35 | **Preview only — waiting for the user's go-ahead to render** (Scentify footage: `scripts/fetch_scentify_footage.sh`) | https://claude.ai/artifact/3nZ7ac5p3f31LJt2qCz9Ud |
+| `videos/scentify/` | 28 Nov 14.35 | Rendered → `scentify final.mp4` (footage: `scripts/fetch_scentify_footage.sh`) | https://claude.ai/artifact/3nZ7ac5p3f31LJt2qCz9Ud |
 
 To render a Luqfa video later: `scripts/fetch_luqfa_footage.sh`, then
 `cd videos/luqfa-lotion-2 && npx hyperframes render -o "<name>.mp4" -f 30 -q delivery`.
