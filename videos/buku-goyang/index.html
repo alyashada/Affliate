@@ -42,6 +42,11 @@
     </div>
     <script>
       const tl = gsap.timeline({ paused: true });
+      tl.fromTo("#shot0", {scale: 1.000}, {scale: 1.060, duration: 2.50, ease: "sine.inOut"}, 0.00);
+      tl.fromTo("#shot1", {scale: 1.060}, {scale: 1.000, duration: 2.00, ease: "sine.inOut"}, 2.50);
+      tl.fromTo("#shot2", {scale: 1.000}, {scale: 1.060, duration: 2.00, ease: "sine.inOut"}, 4.50);
+      tl.fromTo("#shot3", {scale: 1.060}, {scale: 1.000, duration: 1.80, ease: "sine.inOut"}, 6.50);
+      tl.fromTo("#shot4", {scale: 1.000}, {scale: 1.060, duration: 1.70, ease: "sine.inOut"}, 8.30);
       tl.set("#cam", {rotation: 0, x: 0}, 0);
       tl.fromTo("#hook .big", {scale: 0.55, opacity: 0}, {scale: 1, opacity: 1, duration: 0.32, ease: "back.out(2.4)"}, 0.05);
       window.__timelines = window.__timelines || {};

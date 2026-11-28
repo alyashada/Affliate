@@ -8,7 +8,7 @@ sways to a 120 BPM beat ("goyang"), cuts land on the beat, and TikTok-style plai
 sits mid-screen: a hook, then points popping in one by one, then the CTA.
 
 edit.json keys (points, cta and wobble are optional):
-  duration, beat (s), wobble {deg, x, half}, plain_cuts (true = straight cuts, no punch-in/flash)
+  duration, beat (s), wobble {deg, x, half}, plain_cuts (true = straight cuts, no punch-in/flash), zoom (e.g. 0.06)
   shots   [[start, end, clip, media_start], ...]   footage in assets/footage/clipN.mp4
   hook    {end, text}
   points  {end, items: [{t, title, sub}, ...]}     items stay on screen until points.end
@@ -33,6 +33,7 @@ def build(project: Path):
     dur = cfg["duration"]
     wob = cfg.get("wobble")  # omit for no sway
     plain = cfg.get("plain_cuts", False)  # true: straight cuts, no punch-in or flash
+    zoom = cfg.get("zoom", 0)  # e.g. 0.06: each shot zooms in or out by 6%, alternating
     body, js = [], []
 
     # ---- footage inside a "camera" wrapper that sways
@@ -44,6 +45,9 @@ def build(project: Path):
         if not plain:  # every cut is on the beat: a short punch-in, then a slow push
             js.append(f'tl.fromTo("#shot{i}", {{scale: 1.14}}, {{scale: 1.0, duration: 0.26, ease: "power3.out"}}, {s:.2f});')
             js.append(f'tl.to("#shot{i}", {{scale: 1.04, duration: {max(e - s - 0.26, 0.1):.2f}, ease: "none"}}, {s + 0.26:.2f});')
+        if zoom:  # gentle zoom, alternating in / out shot by shot
+            lo, hi = (1.0, 1.0 + zoom) if i % 2 == 0 else (1.0 + zoom, 1.0)
+            js.append(f'tl.fromTo("#shot{i}", {{scale: {lo:.3f}}}, {{scale: {hi:.3f}, duration: {e - s:.2f}, ease: "sine.inOut"}}, {s:.2f});')
         if i and not plain:
             js.append(f'tl.fromTo("#flash", {{opacity: 0.4}}, {{opacity: 0, duration: 0.2, ease: "power2.out", immediateRender: false}}, {s:.2f});')
     cam_style = '' if wob else ' style="scale: 1"'

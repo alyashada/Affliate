@@ -2,6 +2,7 @@
   "title": "Buku — hook sahaja (teks, tanpa voice over)",
   "duration": 10.0,
   "plain_cuts": true,
+  "zoom": 0.06,
   "shots": [
     [0.0, 2.5, 1, 2.0],
     [2.5, 4.5, 2, 2.2],
