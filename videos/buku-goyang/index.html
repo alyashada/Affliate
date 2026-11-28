@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="ms" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <title>Buku — vtt goyang (teks sahaja)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=TikTok+Sans:wght@500;700;800&family=Noto+Color+Emoji&display=block" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+    <style>
+      :root { --ground: #0b0b0b; --ink: #ffffff;
+        --font-tiktok: "TikTok Sans", "Noto Color Emoji", "Helvetica Neue", Arial, sans-serif; }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1920px; overflow: hidden; background: var(--ground); }
+      #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; font-family: var(--font-tiktok); color: var(--ink); }
+      #cam { position: absolute; inset: 0; transform-origin: 50% 55%; scale: 1.1; }
+      .shot { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transform-origin: 50% 50%; }
+      #shade { position: absolute; inset: 0; pointer-events: none; z-index: 5;
+        background: linear-gradient(180deg, rgba(0,0,0,.30) 0%, rgba(0,0,0,.42) 30%, rgba(0,0,0,.46) 52%, rgba(0,0,0,.30) 75%, rgba(0,0,0,.45) 100%); }
+      #flash { position: absolute; inset: 0; background: #fff; opacity: 0; z-index: 6; pointer-events: none; }
+      .txt { position: absolute; left: 70px; right: 70px; top: 0; bottom: 0; z-index: 15; display: flex; flex-direction: column;
+        align-items: center; justify-content: center; text-align: center; padding-bottom: 170px; text-shadow: 0 0 3px rgba(0,0,0,.95), 2px 2px 0 rgba(0,0,0,.55), -2px -2px 0 rgba(0,0,0,.55), 2px -2px 0 rgba(0,0,0,.55), -2px 2px 0 rgba(0,0,0,.55), 0 4px 18px rgba(0,0,0,.55); }
+      .txt .big { font-weight: 700; font-size: 84px; line-height: 1.12; letter-spacing: -0.01em; text-wrap: balance; }
+      .txt .sub { font-weight: 500; font-size: 50px; line-height: 1.2; margin-top: 20px; }
+      #points { gap: 40px; }
+      .pt-t { font-weight: 700; font-size: 66px; line-height: 1.1; letter-spacing: -0.01em; }
+      .pt-s { font-weight: 500; font-size: 42px; line-height: 1.2; margin-top: 8px; color: rgba(255,255,255,.92); }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="10.00" data-width="1080" data-height="1920">
+      <div id="cam">
+        <video id="shot0" class="clip shot" src="assets/footage/clip1.mp4" data-start="0.00" data-duration="2.50" data-media-start="2.00" data-track-index="0" muted playsinline preload="auto"></video>
+        <video id="shot1" class="clip shot" src="assets/footage/clip2.mp4" data-start="2.50" data-duration="1.50" data-media-start="16.90" data-track-index="0" muted playsinline preload="auto"></video>
+        <video id="shot2" class="clip shot" src="assets/footage/clip3.mp4" data-start="4.00" data-duration="1.50" data-media-start="36.00" data-track-index="0" muted playsinline preload="auto"></video>
+        <video id="shot3" class="clip shot" src="assets/footage/clip2.mp4" data-start="5.50" data-duration="2.00" data-media-start="26.00" data-track-index="0" muted playsinline preload="auto"></video>
+        <video id="shot4" class="clip shot" src="assets/footage/clip1.mp4" data-start="7.50" data-duration="2.50" data-media-start="16.05" data-track-index="0" muted playsinline preload="auto"></video>
+      </div>
+      <div id="shade"></div>
+      <div id="flash"></div>
+      <div id="hook" class="clip txt" data-start="0" data-duration="2.50" data-track-index="1"><div class="big">Tak tahu nak start baca buku apa? 🤔</div></div>
+      <div id="points" class="clip txt" data-start="2.50" data-duration="5.00" data-track-index="1">
+        <div class="pt" id="pt0"><div class="pt-t">How to Talk to Anyone 😅</div><div class="pt-s">untuk yang awkward jumpa orang baru</div></div>
+        <div class="pt" id="pt1"><div class="pt-t">The Psychology of Money 💸</div><div class="pt-s">pasal duit, tapi tak pening</div></div>
+        <div class="pt" id="pt2"><div class="pt-t">Senang baca 📖</div><div class="pt-s">sesuai untuk yang malas baca macam I dulu</div></div>
+      </div>
+      <div id="cta" class="clip txt" data-start="7.50" data-duration="2.50" data-track-index="1"><div class="big">Link kat beg kuning 👇</div><div class="sub">pilih satu je dulu pun okay!</div></div>
+    </div>
+    <script>
+      const tl = gsap.timeline({ paused: true });
+      tl.fromTo("#shot0", {scale: 1.14}, {scale: 1.0, duration: 0.26, ease: "power3.out"}, 0.00);
+      tl.to("#shot0", {scale: 1.04, duration: 2.24, ease: "none"}, 0.26);
+      tl.fromTo("#shot1", {scale: 1.14}, {scale: 1.0, duration: 0.26, ease: "power3.out"}, 2.50);
+      tl.to("#shot1", {scale: 1.04, duration: 1.24, ease: "none"}, 2.76);
+      tl.fromTo("#flash", {opacity: 0.4}, {opacity: 0, duration: 0.2, ease: "power2.out", immediateRender: false}, 2.50);
+      tl.fromTo("#shot2", {scale: 1.14}, {scale: 1.0, duration: 0.26, ease: "power3.out"}, 4.00);
+      tl.to("#shot2", {scale: 1.04, duration: 1.24, ease: "none"}, 4.26);
+      tl.fromTo("#flash", {opacity: 0.4}, {opacity: 0, duration: 0.2, ease: "power2.out", immediateRender: false}, 4.00);
+      tl.fromTo("#shot3", {scale: 1.14}, {scale: 1.0, duration: 0.26, ease: "power3.out"}, 5.50);
+      tl.to("#shot3", {scale: 1.04, duration: 1.74, ease: "none"}, 5.76);
+      tl.fromTo("#flash", {opacity: 0.4}, {opacity: 0, duration: 0.2, ease: "power2.out", immediateRender: false}, 5.50);
+      tl.fromTo("#shot4", {scale: 1.14}, {scale: 1.0, duration: 0.26, ease: "power3.out"}, 7.50);
+      tl.to("#shot4", {scale: 1.04, duration: 2.24, ease: "none"}, 7.76);
+      tl.fromTo("#flash", {opacity: 0.4}, {opacity: 0, duration: 0.2, ease: "power2.out", immediateRender: false}, 7.50);
+      tl.set("#cam", {rotation: 0, x: 0}, 0);
+      tl.to("#cam", {rotation: 1.8, x: 14, duration: 0.25, ease: "sine.inOut"}, 0.00);
+      tl.to("#cam", {rotation: -1.8, x: -14, duration: 0.25, ease: "sine.inOut"}, 0.25);
+      tl.to("#cam", {rotation: 1.8, x: 14, duration: 0.25, ease: "sine.inOut"}, 0.50);
+      tl.to("#cam", {rotation: -1.8, x: -14, duration: 0.25, ease: "sine.inOut"}, 0.75);
+      tl.to("#cam", {rotation: 1.8, x: 14, duration: 0.25, ease: "sine.inOut"}, 1.00);
+      tl.to("#cam", {rotation: -1.8, x: -14, duration: 0.25, ease: "sine.inOut"}, 1.25);
+      tl.to("#cam", {rotation: 1.8, x: 14, duration: 0.25, ease: "sine.inOut"}, 1.50);
+      tl.to("#cam", {rotation: -1.8, x: -14, duration: 0.25, ease: "sine.inOut"}, 1.75);
+      tl.to("#cam", {rotation: 1.8, x: 14, duration: 0.25, ease: "sine.inOut"}, 2.00);
+      tl.to("#cam", {rotation: -1.8, x: -14, duration: 0.25, ease: "sine.inOut"}, 2.25);
+      tl.to("#cam", {rotation: 1.8, x: 14, duration: 0.25, ease: "sine.inOut"}, 2.50);
+      tl.to("#cam", {rotation: -1.8, x: -14, duration: 0.25, ease: "sine.inOut"}, 2.75);
+      tl.to("#cam", {rotation: 1.8, x: 14, duration: 0.25, ease: "sine.inOut"}, 3.00);
+      tl.to("#cam", {rotation: -1.8, x: -14, duration: 0.25, ease: "sine.inOut"}, 3.25);
+      tl.to("#cam", {rotation: 1.8, x: 14, duration: 0.25, ease: "sine.inOut"}, 3.50);
+      tl.to("#cam", {rotation: -1.8, x: -14, duration: 0.25, ease: "sine.inOut"}, 3.75);
+      tl.to("#cam", {rotation: 1.8, x: 14, duration: 0.25, ease: "sine.inOut"}, 4.00);
+      tl.to("#cam", {rotation: -1.8, x: -14, duration: 0.25, ease: "sine.inOut"}, 4.25);
+      tl.to("#cam", {rotation: 1.8, x: 14, duration: 0.25, ease: "sine.inOut"}, 4.50);
+      tl.to("#cam", {rotation: -1.8, x: -14, duration: 0.25, ease: "sine.inOut"}, 4.75);
+      tl.to("#cam", {rotation: 1.8, x: 14, duration: 0.25, ease: "sine.inOut"}, 5.00);
+      tl.to("#cam", {rotation: -1.8, x: -14, duration: 0.25, ease: "sine.inOut"}, 5.25);
+      tl.to("#cam", {rotation: 1.8, x: 14, duration: 0.25, ease: "sine.inOut"}, 5.50);
+      tl.to("#cam", {rotation: -1.8, x: -14, duration: 0.25, ease: "sine.inOut"}, 5.75);
+      tl.to("#cam", {rotation: 1.8, x: 14, duration: 0.25, ease: "sine.inOut"}, 6.00);
+      tl.to("#cam", {rotation: -1.8, x: -14, duration: 0.25, ease: "sine.inOut"}, 6.25);
+      tl.to("#cam", {rotation: 1.8, x: 14, duration: 0.25, ease: "sine.inOut"}, 6.50);
+      tl.to("#cam", {rotation: -1.8, x: -14, duration: 0.25, ease: "sine.inOut"}, 6.75);
+      tl.to("#cam", {rotation: 1.8, x: 14, duration: 0.25, ease: "sine.inOut"}, 7.00);
+      tl.to("#cam", {rotation: -1.8, x: -14, duration: 0.25, ease: "sine.inOut"}, 7.25);
+      tl.to("#cam", {rotation: 1.8, x: 14, duration: 0.25, ease: "sine.inOut"}, 7.50);
+      tl.to("#cam", {rotation: -1.8, x: -14, duration: 0.25, ease: "sine.inOut"}, 7.75);
+      tl.to("#cam", {rotation: 1.8, x: 14, duration: 0.25, ease: "sine.inOut"}, 8.00);
+      tl.to("#cam", {rotation: -1.8, x: -14, duration: 0.25, ease: "sine.inOut"}, 8.25);
+      tl.to("#cam", {rotation: 1.8, x: 14, duration: 0.25, ease: "sine.inOut"}, 8.50);
+      tl.to("#cam", {rotation: -1.8, x: -14, duration: 0.25, ease: "sine.inOut"}, 8.75);
+      tl.to("#cam", {rotation: 1.8, x: 14, duration: 0.25, ease: "sine.inOut"}, 9.00);
+      tl.to("#cam", {rotation: -1.8, x: -14, duration: 0.25, ease: "sine.inOut"}, 9.25);
+      tl.to("#cam", {rotation: 1.8, x: 14, duration: 0.25, ease: "sine.inOut"}, 9.50);
+      tl.to("#cam", {rotation: -1.8, x: -14, duration: 0.25, ease: "sine.inOut"}, 9.75);
+      tl.fromTo("#hook .big", {scale: 0.55, opacity: 0}, {scale: 1, opacity: 1, duration: 0.32, ease: "back.out(2.4)"}, 0.05);
+      tl.to("#hook .big", {scale: 0.9, opacity: 0, duration: 0.12, ease: "power2.in"}, 2.38);
+      tl.fromTo("#pt0", {scale: 0.5, opacity: 0, y: 30}, {scale: 1, opacity: 1, y: 0, duration: 0.3, ease: "back.out(2.6)", immediateRender: true}, 2.50);
+      tl.fromTo("#pt1", {scale: 0.5, opacity: 0, y: 30}, {scale: 1, opacity: 1, y: 0, duration: 0.3, ease: "back.out(2.6)", immediateRender: true}, 4.00);
+      tl.fromTo("#pt2", {scale: 0.5, opacity: 0, y: 30}, {scale: 1, opacity: 1, y: 0, duration: 0.3, ease: "back.out(2.6)", immediateRender: true}, 5.50);
+      tl.to("#points", {opacity: 0, scale: 0.94, duration: 0.12, ease: "power2.in"}, 7.38);
+      tl.fromTo("#cta .big", {scale: 0.55, opacity: 0}, {scale: 1, opacity: 1, duration: 0.32, ease: "back.out(2.4)"}, 7.52);
+      tl.fromTo("#cta .sub", {y: 24, opacity: 0}, {y: 0, opacity: 1, duration: 0.28, ease: "power2.out"}, 8.00);
+      window.__timelines = window.__timelines || {};
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>

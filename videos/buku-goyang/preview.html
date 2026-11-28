@@ -1,0 +1,219 @@
+<title>Buku Goyang Preview</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=TikTok+Sans:wght@500;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+  /* Layout: editor bay — phone-sized player on the left, the edit plan on the right; stacks on phones.
+     Single dark look on purpose (an editing monitor), every colour still a token. */
+  :root {
+    --bg: #121110;
+    --panel: #1c1a18;
+    --line: #2e2b27;
+    --fg: #f2efe9;
+    --muted: #a39d93;
+    --accent: #f5c518;
+    --accent-ink: #141210;
+    --font-display: "TikTok Sans", "Segoe UI", system-ui, sans-serif;
+    --font-body: "Inter", system-ui, -apple-system, sans-serif;
+    --font-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  body { background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 15px; line-height: 1.5;
+    padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 20px 40px; }
+  .wrap { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 400px) minmax(0, 1fr); gap: 28px; align-items: start; }
+  @media (max-width: 820px) { .wrap { grid-template-columns: minmax(0, 1fr); } .stage { max-width: 380px; margin: 0 auto; width: 100%; } }
+
+  header { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px 16px; }
+  h1 { font-family: var(--font-display); font-weight: 700; font-size: 1.6rem; margin: 0; letter-spacing: -0.01em; text-wrap: balance; }
+  .pill { font-family: var(--font-mono); font-size: 12px; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--accent); color: var(--accent); letter-spacing: .04em; text-transform: uppercase; }
+  .sub { color: var(--muted); margin: 0; flex-basis: 100%; }
+
+  .stage { position: relative; }
+  .screen { position: relative; width: 100%; aspect-ratio: 9 / 16; max-width: 100%; border-radius: 22px; overflow: hidden; background: #000; border: 1px solid var(--line); }
+  .screen iframe { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; border: 0; transform-origin: 0 0; pointer-events: none; }
+  .bigplay { position: absolute; inset: 0; display: grid; place-items: center; background: rgba(0,0,0,.35); border: 0; cursor: pointer; color: var(--fg); font: 600 15px var(--font-body); }
+  .bigplay span { display: grid; place-items: center; gap: 10px; }
+  .bigplay svg { width: 74px; height: 74px; }
+  .bigplay:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .guide { position: absolute; inset: 0; pointer-events: none; }
+  .guide div { position: absolute; background: rgba(255, 60, 90, .22); border: 1px dashed rgba(255, 90, 120, .8); }
+  .guide .g-right { right: 0; top: 46%; width: 15%; height: 40%; }
+  .guide .g-bottom { left: 0; right: 15%; bottom: 0; height: 18%; }
+  .guide .g-top { left: 0; right: 0; top: 0; height: 7%; }
+
+  .controls { display: flex; align-items: center; gap: 10px; margin-top: 12px; }
+  .controls button { flex: none; width: 42px; height: 42px; border-radius: 50%; border: 0; background: var(--accent); color: var(--accent-ink); cursor: pointer; display: grid; place-items: center; }
+  .controls button svg { width: 18px; height: 18px; }
+  .controls input[type=range] { flex: 1; min-width: 0; accent-color: var(--accent); }
+  .time { font-family: var(--font-mono); font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; min-width: 92px; text-align: right; }
+  .toggles { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 10px; font-size: 13px; color: var(--muted); }
+  .toggles label { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
+
+  section { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 18px 20px; min-width: 0; }
+  section + section { margin-top: 18px; }
+  h2 { font-family: var(--font-display); font-size: 1.05rem; font-weight: 700; margin: 0 0 12px; }
+  .beats { display: grid; gap: 4px; }
+  .beat { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 10px; align-items: baseline; padding: 7px 8px; border-radius: 10px; cursor: pointer; border: 0; background: none; color: inherit; font: inherit; text-align: left; }
+  .beat:hover { background: rgba(255,255,255,.04); }
+  .beat .ts { font-family: var(--font-mono); font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .beat .tx { font-family: var(--font-display); font-weight: 700; font-size: 15px; }
+  .beat .tx small { display: block; font-family: var(--font-body); font-weight: 400; font-size: 13px; color: var(--muted); }
+  .beat .kind { font-family: var(--font-mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin-right: 6px; }
+  .beat.on { background: rgba(245,197,24,.08); }
+  .beat.on .ts { color: var(--accent); }
+  ul.log { margin: 0; padding-left: 18px; display: grid; gap: 8px; }
+  ul.log li::marker { color: var(--accent); }
+  ul.log b { font-weight: 600; }
+  .note { color: var(--muted); font-size: 13.5px; margin: 12px 0 0; }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>Buku — video goyang, teks sahaja</h1>
+    <span class="pill">Preview · belum render</span>
+    <p class="sub">10 saat, tiada voice over. Footage resolusi rendah untuk preview; lagu awak tambah sendiri dalam TikTok.</p>
+  </header>
+
+  <div class="stage">
+    <div class="screen" id="screen">
+      <iframe id="comp" src="composition.html" title="Composition HyperFrames" scrolling="no"></iframe>
+      <div class="guide" id="guide" hidden><div class="g-top"></div><div class="g-right"></div><div class="g-bottom"></div></div>
+      <button class="bigplay" id="bigplay" aria-label="Main preview">
+        <span><svg viewBox="0 0 80 80" aria-hidden="true"><circle cx="40" cy="40" r="38" fill="#f5c518"/><path d="M33 26 L56 40 L33 54 Z" fill="#141210"/></svg>Main preview</span>
+      </button>
+    </div>
+    <div class="controls">
+      <button id="pp" aria-label="Main / jeda"><svg viewBox="0 0 20 20" id="ppicon" aria-hidden="true"><path d="M5 3 L17 10 L5 17 Z" fill="currentColor"/></svg></button>
+      <input type="range" id="scrub" min="0" max="10" step="0.01" value="0" aria-label="Kedudukan">
+      <span class="time" id="time">0:00.0 / 0:10.0</span>
+    </div>
+    <div class="toggles">
+      <label><input type="checkbox" id="tgGuide"> Tunjuk kawasan UI TikTok</label>
+      <label><input type="checkbox" id="tgLoop" checked> Ulang</label>
+    </div>
+  </div>
+
+  <div>
+    <section>
+      <h2>Teks atas skrin (klik untuk lompat)</h2>
+      <div class="beats" id="beats"></div>
+    </section>
+    <section>
+      <h2>Apa yang dah dibuat</h2>
+      <ul class="log">
+        <li><b>Gaya teks macam gambar contoh:</b> font TikTok, putih dengan outline gelap, di tengah skrin. Tiada kotak, tiada warna.</li>
+        <li><b>Point keluar satu-satu</b> dan kekal atas skrin sampai CTA.</li>
+        <li><b>Goyang:</b> footage bergoyang kiri-kanan ikut rentak 120 BPM, dan setiap tukar shot jatuh atas beat.</li>
+        <li><b>Shot ikut point:</b> hook dengan dua-dua buku, How to Talk to Anyone, The Psychology of Money, isi buku untuk "senang baca", dan dua-dua buku masa CTA.</li>
+        <li><b>Tiada audio langsung.</b> Tiada voice over dan tiada sound effect.</li>
+      </ul>
+      <p class="note">Footage ni dari video buku yang lama, jadi buku tak digoyang betul-betul; goyang tu dibuat dalam edit. Bila awak bagi footage yang awak goyangkan sendiri, saya kurangkan goyang edit supaya tak terlebih.</p>
+    </section>
+  </div>
+</div>
+
+<script>
+(() => {
+  const DUR = 10.0;
+  const BEATS = [
+    [0.0, "Hook", "Tak tahu nak start baca buku apa? 🤔", ""],
+    [2.5, "Point", "How to Talk to Anyone 😅", "untuk yang awkward jumpa orang baru"],
+    [4.0, "Point", "The Psychology of Money 💸", "pasal duit, tapi tak pening"],
+    [5.5, "Point", "Senang baca 📖", "sesuai untuk yang malas baca macam I dulu"],
+    [7.5, "CTA", "Link kat beg kuning 👇", "pilih satu je dulu pun okay!"],
+  ];
+  const iframe = document.getElementById("comp");
+  const screen = document.getElementById("screen");
+  const scrub = document.getElementById("scrub");
+  const timeEl = document.getElementById("time");
+  const bigplay = document.getElementById("bigplay");
+  const ppicon = document.getElementById("ppicon");
+  const PLAY = '<path d="M5 3 L17 10 L5 17 Z" fill="currentColor"/>';
+  const PAUSE = '<rect x="4" y="3" width="4.5" height="14" rx="1" fill="currentColor"/><rect x="11.5" y="3" width="4.5" height="14" rx="1" fill="currentColor"/>';
+  let tl, clips = [], videos = [], playing = false, t = 0, t0 = 0, wall0 = 0;
+  const fmt = s => `${Math.floor(s / 60)}:${(s % 60).toFixed(1).padStart(4, "0")}`;
+
+  function fit() { iframe.style.transform = `scale(${screen.clientWidth / 1080})`; }
+  new ResizeObserver(fit).observe(screen); fit();
+
+  iframe.addEventListener("load", async () => {
+    const doc = iframe.contentDocument, win = iframe.contentWindow;
+    for (let i = 0; i < 100 && !(win.__timelines && win.__timelines.main); i++) await new Promise(r => setTimeout(r, 50));
+    tl = win.__timelines.main;
+    clips = [...doc.querySelectorAll("#root [data-start]")];
+    videos = clips.filter(el => el.tagName === "VIDEO").map(el => ({ el, s: +el.dataset.start, d: +el.dataset.duration, ms: +el.dataset.mediaStart || 0 }));
+    videos.forEach(v => { v.el.muted = true; v.el.playsInline = true; });
+    render(0);
+  });
+
+  function play() {
+    if (!tl) return;
+    if (t >= DUR - 0.05) t = 0;
+    t0 = t; wall0 = performance.now();
+    playing = true; bigplay.hidden = true; ppicon.innerHTML = PAUSE;
+    requestAnimationFrame(tick);
+  }
+  function pause() { playing = false; ppicon.innerHTML = PLAY; videos.forEach(v => v.el.pause()); }
+  function seek(to) { t = Math.max(0, Math.min(DUR, to)); t0 = t; wall0 = performance.now(); render(t); }
+  function tick() {
+    if (!playing) return;
+    t = t0 + (performance.now() - wall0) / 1000;
+    if (t >= DUR) {
+      if (document.getElementById("tgLoop").checked) seek(0);
+      else { t = DUR; render(t); pause(); return; }
+    }
+    render(t);
+    requestAnimationFrame(tick);
+  }
+  function render(time) {
+    if (!tl) return;
+    tl.seek(time, false);
+    for (const el of clips) {
+      const s = +el.dataset.start, d = +el.dataset.duration;
+      el.style.visibility = time >= s && time < s + d ? "visible" : "hidden";
+    }
+    for (const v of videos) {
+      const on = time >= v.s && time < v.s + v.d, want = v.ms + (time - v.s);
+      if (on) {
+        if (playing) {
+          if (v.el.paused) v.el.play().catch(() => {});
+          if (Math.abs(v.el.currentTime - want) > 0.25) v.el.currentTime = want;
+        } else {
+          if (!v.el.paused) v.el.pause();
+          if (Math.abs(v.el.currentTime - want) > 0.03) v.el.currentTime = want;
+        }
+      } else {
+        if (!v.el.paused) v.el.pause();
+        if (time < v.s && v.s - time < 1.5 && Math.abs(v.el.currentTime - v.ms) > 0.1) v.el.currentTime = v.ms;
+      }
+    }
+    scrub.value = time.toFixed(2);
+    timeEl.textContent = `${fmt(time)} / ${fmt(DUR)}`;
+    let cur = 0;
+    BEATS.forEach((b, i) => { if (time >= b[0]) cur = i; });
+    beatEls.forEach((el, i) => el.classList.toggle("on", i === cur));
+  }
+
+  const box = document.getElementById("beats");
+  const beatEls = BEATS.map(([s, kind, txt, sub]) => {
+    const btn = document.createElement("button"); btn.className = "beat"; btn.type = "button";
+    btn.innerHTML = `<span class="ts">${fmt(s)}</span><span class="tx"><span class="kind"></span><span class="main"></span><small></small></span>`;
+    btn.querySelector(".kind").textContent = kind;
+    btn.querySelector(".main").textContent = txt;
+    btn.querySelector("small").textContent = sub;
+    btn.addEventListener("click", () => seek(s + 0.6));
+    box.appendChild(btn);
+    return btn;
+  });
+
+  bigplay.addEventListener("click", play);
+  document.getElementById("pp").addEventListener("click", () => playing ? pause() : play());
+  scrub.addEventListener("input", () => seek(+scrub.value));
+  document.getElementById("tgGuide").addEventListener("change", e => { document.getElementById("guide").hidden = !e.target.checked; });
+  document.addEventListener("keydown", e => {
+    if (e.code === "Space" && e.target.tagName !== "INPUT") { e.preventDefault(); playing ? pause() : play(); }
+  });
+})();
+</script>
