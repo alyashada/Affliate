@@ -71,7 +71,7 @@
 
 <div class="wrap">
   <header>
-    <h1>Buku — video goyang, teks sahaja</h1>
+    <h1>Buku — hook sahaja, tanpa voice over</h1>
     <span class="pill">Preview · belum render</span>
     <p class="sub">10 saat, tiada voice over. Footage resolusi rendah untuk preview; lagu awak tambah sendiri dalam TikTok.</p>
   </header>
@@ -97,19 +97,18 @@
 
   <div>
     <section>
-      <h2>Teks atas skrin (klik untuk lompat)</h2>
+      <h2>Hook dan shot (klik untuk lompat)</h2>
       <div class="beats" id="beats"></div>
     </section>
     <section>
       <h2>Apa yang dah dibuat</h2>
       <ul class="log">
-        <li><b>Gaya teks macam gambar contoh:</b> font TikTok, putih dengan outline gelap, di tengah skrin. Tiada kotak, tiada warna.</li>
-        <li><b>Point keluar satu-satu</b> dan kekal atas skrin sampai CTA.</li>
-        <li><b>Goyang:</b> footage bergoyang kiri-kanan ikut rentak 120 BPM, dan setiap tukar shot jatuh atas beat.</li>
-        <li><b>Shot ikut point:</b> hook dengan dua-dua buku, How to Talk to Anyone, The Psychology of Money, isi buku untuk "senang baca", dan dua-dua buku masa CTA.</li>
-        <li><b>Tiada audio langsung.</b> Tiada voice over dan tiada sound effect.</li>
+        <li><b>Hook sahaja:</b> tiada point, tiada CTA. Teks gaya TikTok (putih, outline gelap) di tengah skrin sepanjang 10 saat.</li>
+        <li><b>Tiada efek goyang:</b> footage tak bergoyang, tak zoom, tiada flash. Tukar shot terus.</li>
+        <li><b>Shot:</b> dua-dua buku, How to Talk to Anyone, The Psychology of Money, isi buku, dan dua-dua buku semula.</li>
+        <li><b>Tiada audio langsung.</b> Lagu awak tambah sendiri dalam TikTok.</li>
       </ul>
-      <p class="note">Footage ni dari video buku yang lama, jadi buku tak digoyang betul-betul; goyang tu dibuat dalam edit. Bila awak bagi footage yang awak goyangkan sendiri, saya kurangkan goyang edit supaya tak terlebih.</p>
+      <p class="note">Hook ni saya buat dari ayat pertama skrip awak. Pilihan lain: "Buku ni ubah cara I bercakap dengan orang 😳" atau "2 buku yang I rasa semua orang patut baca 📚". Beritahu je kalau nak tukar.</p>
     </section>
   </div>
 </div>
@@ -118,11 +117,11 @@
 (() => {
   const DUR = 10.0;
   const BEATS = [
-    [0.0, "Hook", "Tak tahu nak start baca buku apa? 🤔", ""],
-    [2.5, "Point", "How to Talk to Anyone 😅", "untuk yang awkward jumpa orang baru"],
-    [4.0, "Point", "The Psychology of Money 💸", "pasal duit, tapi tak pening"],
-    [5.5, "Point", "Senang baca 📖", "sesuai untuk yang malas baca macam I dulu"],
-    [7.5, "CTA", "Link kat beg kuning 👇", "pilih satu je dulu pun okay!"],
+    [0.0, "Hook", "Kalau nak start baca buku, mula dengan 2 buku ni 📚", "kekal atas skrin 10 saat"],
+    [2.5, "Shot", "How to Talk to Anyone", "kulit depan"],
+    [4.5, "Shot", "The Psychology of Money", "kulit depan"],
+    [6.5, "Shot", "Isi buku", "selak muka surat"],
+    [8.3, "Shot", "Dua-dua buku", "penutup"],
   ];
   const iframe = document.getElementById("comp");
   const screen = document.getElementById("screen");

@@ -7,8 +7,8 @@ Style: no voice over, no sound effects (the user adds a trending song in TikTok)
 sways to a 120 BPM beat ("goyang"), cuts land on the beat, and TikTok-style plain white text
 sits mid-screen: a hook, then points popping in one by one, then the CTA.
 
-edit.json keys:
-  duration, beat (s), wobble {deg, x, half}
+edit.json keys (points, cta and wobble are optional):
+  duration, beat (s), wobble {deg, x, half}, plain_cuts (true = straight cuts, no punch-in/flash)
   shots   [[start, end, clip, media_start], ...]   footage in assets/footage/clipN.mp4
   hook    {end, text}
   points  {end, items: [{t, title, sub}, ...]}     items stay on screen until points.end
@@ -31,7 +31,8 @@ def esc(s):
 def build(project: Path):
     cfg = json.loads((project / "edit.json").read_text())
     dur = cfg["duration"]
-    wob = cfg.get("wobble", {"deg": 1.8, "x": 14, "half": 0.25})
+    wob = cfg.get("wobble")  # omit for no sway
+    plain = cfg.get("plain_cuts", False)  # true: straight cuts, no punch-in or flash
     body, js = [], []
 
     # ---- footage inside a "camera" wrapper that sways
@@ -40,19 +41,20 @@ def build(project: Path):
         vids.append(f'        <video id="shot{i}" class="clip shot" src="assets/footage/clip{clip}.mp4" '
                     f'data-start="{s:.2f}" data-duration="{e - s:.2f}" data-media-start="{ms:.2f}" '
                     f'data-track-index="0" muted playsinline preload="auto"></video>')
-        # every cut is on the beat: a short punch-in, then a slow push
-        js.append(f'tl.fromTo("#shot{i}", {{scale: 1.14}}, {{scale: 1.0, duration: 0.26, ease: "power3.out"}}, {s:.2f});')
-        js.append(f'tl.to("#shot{i}", {{scale: 1.04, duration: {max(e - s - 0.26, 0.1):.2f}, ease: "none"}}, {s + 0.26:.2f});')
-        if i:
+        if not plain:  # every cut is on the beat: a short punch-in, then a slow push
+            js.append(f'tl.fromTo("#shot{i}", {{scale: 1.14}}, {{scale: 1.0, duration: 0.26, ease: "power3.out"}}, {s:.2f});')
+            js.append(f'tl.to("#shot{i}", {{scale: 1.04, duration: {max(e - s - 0.26, 0.1):.2f}, ease: "none"}}, {s + 0.26:.2f});')
+        if i and not plain:
             js.append(f'tl.fromTo("#flash", {{opacity: 0.4}}, {{opacity: 0, duration: 0.2, ease: "power2.out", immediateRender: false}}, {s:.2f});')
-    body.append('      <div id="cam">\n' + "\n".join(vids) + '\n      </div>')
+    cam_style = '' if wob else ' style="scale: 1"'
+    body.append(f'      <div id="cam"{cam_style}>\n' + "\n".join(vids) + '\n      </div>')
     body.append('      <div id="shade"></div>\n      <div id="flash"></div>')
 
     # goyang: rotate + slide left/right, one swing per half beat
-    half = wob["half"]
+    half = wob["half"] if wob else 0
     js.append('tl.set("#cam", {rotation: 0, x: 0}, 0);')
     k, t = 0, 0.0
-    while t < dur - 1e-6:
+    while wob and t < dur - 1e-6:
         sgn = 1 if k % 2 == 0 else -1
         d = min(half, dur - t)
         js.append(f'tl.to("#cam", {{rotation: {sgn * wob["deg"]}, x: {sgn * wob["x"]}, duration: {d:.2f}, ease: "sine.inOut"}}, {t:.2f});')
@@ -63,25 +65,28 @@ def build(project: Path):
     body.append(f'      <div id="hook" class="clip txt" data-start="0" data-duration="{hook["end"]:.2f}" '
                 f'data-track-index="1"><div class="big">{esc(hook["text"])}</div></div>')
     js.append('tl.fromTo("#hook .big", {scale: 0.55, opacity: 0}, {scale: 1, opacity: 1, duration: 0.32, ease: "back.out(2.4)"}, 0.05);')
-    js.append(f'tl.to("#hook .big", {{scale: 0.9, opacity: 0, duration: 0.12, ease: "power2.in"}}, {hook["end"] - 0.12:.2f});')
+    if hook["end"] < dur:
+        js.append(f'tl.to("#hook .big", {{scale: 0.9, opacity: 0, duration: 0.12, ease: "power2.in"}}, {hook["end"] - 0.12:.2f});')
 
     # ---- points: pop in one by one, stay until points.end
-    pts = cfg["points"]
-    p0 = pts["items"][0]["t"]
-    rows = "\n".join(f'        <div class="pt" id="pt{i}"><div class="pt-t">{esc(it["title"])}</div>'
-                     f'<div class="pt-s">{esc(it["sub"])}</div></div>' for i, it in enumerate(pts["items"]))
-    body.append(f'      <div id="points" class="clip txt" data-start="{p0:.2f}" data-duration="{pts["end"] - p0:.2f}" '
-                f'data-track-index="1">\n{rows}\n      </div>')
-    for i, it in enumerate(pts["items"]):
-        js.append(f'tl.fromTo("#pt{i}", {{scale: 0.5, opacity: 0, y: 30}}, {{scale: 1, opacity: 1, y: 0, duration: 0.3, ease: "back.out(2.6)", immediateRender: true}}, {it["t"]:.2f});')
-    js.append(f'tl.to("#points", {{opacity: 0, scale: 0.94, duration: 0.12, ease: "power2.in"}}, {pts["end"] - 0.12:.2f});')
+    pts = cfg.get("points")
+    if pts and pts["items"]:
+        p0 = pts["items"][0]["t"]
+        rows = "\n".join(f'        <div class="pt" id="pt{i}"><div class="pt-t">{esc(it["title"])}</div>'
+                         f'<div class="pt-s">{esc(it["sub"])}</div></div>' for i, it in enumerate(pts["items"]))
+        body.append(f'      <div id="points" class="clip txt" data-start="{p0:.2f}" data-duration="{pts["end"] - p0:.2f}" '
+                    f'data-track-index="1">\n{rows}\n      </div>')
+        for i, it in enumerate(pts["items"]):
+            js.append(f'tl.fromTo("#pt{i}", {{scale: 0.5, opacity: 0, y: 30}}, {{scale: 1, opacity: 1, y: 0, duration: 0.3, ease: "back.out(2.6)", immediateRender: true}}, {it["t"]:.2f});')
+        js.append(f'tl.to("#points", {{opacity: 0, scale: 0.94, duration: 0.12, ease: "power2.in"}}, {pts["end"] - 0.12:.2f});')
 
     # ---- CTA
-    cta = cfg["cta"]
-    body.append(f'      <div id="cta" class="clip txt" data-start="{cta["start"]:.2f}" data-duration="{dur - cta["start"]:.2f}" '
-                f'data-track-index="1"><div class="big">{esc(cta["l1"])}</div><div class="sub">{esc(cta["l2"])}</div></div>')
-    js.append(f'tl.fromTo("#cta .big", {{scale: 0.55, opacity: 0}}, {{scale: 1, opacity: 1, duration: 0.32, ease: "back.out(2.4)"}}, {cta["start"] + 0.02:.2f});')
-    js.append(f'tl.fromTo("#cta .sub", {{y: 24, opacity: 0}}, {{y: 0, opacity: 1, duration: 0.28, ease: "power2.out"}}, {cta["start"] + 0.5:.2f});')
+    cta = cfg.get("cta")
+    if cta:
+        body.append(f'      <div id="cta" class="clip txt" data-start="{cta["start"]:.2f}" data-duration="{dur - cta["start"]:.2f}" '
+                    f'data-track-index="1"><div class="big">{esc(cta["l1"])}</div><div class="sub">{esc(cta["l2"])}</div></div>')
+        js.append(f'tl.fromTo("#cta .big", {{scale: 0.55, opacity: 0}}, {{scale: 1, opacity: 1, duration: 0.32, ease: "back.out(2.4)"}}, {cta["start"] + 0.02:.2f});')
+        js.append(f'tl.fromTo("#cta .sub", {{y: 24, opacity: 0}}, {{y: 0, opacity: 1, duration: 0.28, ease: "power2.out"}}, {cta["start"] + 0.5:.2f});')
 
     page = (TEMPLATE.replace("__TITLE__", esc(cfg.get("title", project.name)))
             .replace("__DUR__", f"{dur:.2f}").replace("__EDGE__", EDGE)

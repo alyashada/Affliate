@@ -24,7 +24,7 @@ Ask for a new affiliate video "same style as buku final" and it is applied autom
 | `videos/luqfa-lotion/` | 27 Nov 19.22 | Rendered → `luqfa final.mp4` | https://claude.ai/artifact/H8thh8S8gzpENpcsdSmppE |
 | `videos/luqfa-lotion-2/` | 27 Nov 19.23 | **Preview only — waiting for the user's go-ahead to render** | https://claude.ai/artifact/XGZhDYjMoAWKw8VHPXakQm |
 | `videos/scentify/` | 28 Nov 14.35 | Rendered → `scentify final.mp4` (footage: `scripts/fetch_scentify_footage.sh`) | https://claude.ai/artifact/3nZ7ac5p3f31LJt2qCz9Ud |
-| `videos/buku-goyang/` | none (text only, 10s "vtt goyang") | **Preview only — waiting for the user's go-ahead to render** | https://claude.ai/artifact/2bPUZMnmLP4hJKnokhk3x2 |
+| `videos/buku-goyang/` | none (hook text only, 10s, no effects) | **Preview only — waiting for the user's go-ahead to render** | https://claude.ai/artifact/2bPUZMnmLP4hJKnokhk3x2 |
 
 To render a Luqfa video later: `scripts/fetch_luqfa_footage.sh`, then
 `cd videos/luqfa-lotion-2 && npx hyperframes render -o "<name>.mp4" -f 30 -q delivery`.
