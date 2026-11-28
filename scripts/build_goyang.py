@@ -10,7 +10,7 @@ sits mid-screen: a hook, then points popping in one by one, then the CTA.
 edit.json keys (points, cta and wobble are optional):
   duration, beat (s), wobble {deg, x, half}, plain_cuts (true = straight cuts, no punch-in/flash), zoom (e.g. 0.06)
   shots   [[start, end, clip, media_start], ...]   footage in assets/footage/clipN.mp4
-  hook    {end, text}
+  hook    {end, text, size (px, optional)}
   points  {end, items: [{t, title, sub}, ...]}     items stay on screen until points.end
   cta     {start, l1, l2}
 """
@@ -66,8 +66,9 @@ def build(project: Path):
 
     # ---- hook
     hook = cfg["hook"]
+    size = f' style="font-size: {hook["size"]}px"' if hook.get("size") else ""  # default 84px
     body.append(f'      <div id="hook" class="clip txt" data-start="0" data-duration="{hook["end"]:.2f}" '
-                f'data-track-index="1"><div class="big">{esc(hook["text"])}</div></div>')
+                f'data-track-index="1"><div class="big"{size}>{esc(hook["text"])}</div></div>')
     js.append('tl.fromTo("#hook .big", {scale: 0.55, opacity: 0}, {scale: 1, opacity: 1, duration: 0.32, ease: "back.out(2.4)"}, 0.05);')
     if hook["end"] < dur:
         js.append(f'tl.to("#hook .big", {{scale: 0.9, opacity: 0, duration: 0.12, ease: "power2.in"}}, {hook["end"] - 0.12:.2f});')
