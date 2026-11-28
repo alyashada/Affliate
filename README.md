@@ -15,3 +15,14 @@ Render locally when approved (free, no cloud credits): `cd video && npx hyperfra
 
 The editing style is saved as a Claude Code skill: `.claude/skills/affiliate-video-edit/SKILL.md`.
 Ask for a new affiliate video "same style as buku final" and it is applied automatically.
+
+## Videos
+
+| Project | Voice over | Status | Preview |
+|---|---|---|---|
+| `video/` (buku final) | 26 Nov 20.47 | Rendered → `buku final.mp4` | https://claude.ai/artifact/K2UJKvpqjk86v3Vz7iYnCL |
+| `videos/luqfa-lotion/` | 27 Nov 19.22 | Rendered → `luqfa final.mp4` | https://claude.ai/artifact/H8thh8S8gzpENpcsdSmppE |
+| `videos/luqfa-lotion-2/` | 27 Nov 19.23 | **Preview only — waiting for the user's go-ahead to render** | https://claude.ai/artifact/XGZhDYjMoAWKw8VHPXakQm |
+
+To render a Luqfa video later: `scripts/fetch_luqfa_footage.sh`, then
+`cd videos/luqfa-lotion-2 && npx hyperframes render -o "<name>.mp4" -f 30 -q delivery`.
