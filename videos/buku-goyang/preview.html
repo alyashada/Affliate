@@ -97,15 +97,15 @@
 
   <div>
     <section>
-      <h2>Hook dan shot (klik untuk lompat)</h2>
+      <h2>Hook dan klip</h2>
       <div class="beats" id="beats"></div>
     </section>
     <section>
       <h2>Apa yang dah dibuat</h2>
       <ul class="log">
         <li><b>Hook sahaja:</b> tiada point, tiada CTA. Teks gaya TikTok (putih, outline gelap) di tengah skrin sepanjang 10 saat.</li>
-        <li><b>Zoom perlahan:</b> setiap shot zoom in atau zoom out sikit (6%) secara bergilir. Tiada goyang, tiada flash, tukar shot terus.</li>
-        <li><b>Shot:</b> dua-dua buku, How to Talk to Anyone, The Psychology of Money, isi buku, dan dua-dua buku semula.</li>
+        <li><b>Zoom perlahan:</b> zoom in dan zoom out sikit (6%) bergilir setiap 2.5 saat. Tiada efek goyang dan tiada flash.</li>
+        <li><b>Satu klip sahaja:</b> The Psychology of Money yang awak goyangkan depan kamera, 10 saat tanpa potong.</li>
         <li><b>Tiada audio langsung.</b> Lagu awak tambah sendiri dalam TikTok.</li>
       </ul>
       <p class="note">Hook ditukar ke pilihan #11 dan saiz teks dikecilkan (84px → 66px). Beritahu kalau nak lebih kecil atau besar.</p>
@@ -118,10 +118,7 @@
   const DUR = 10.0;
   const BEATS = [
     [0.0, "Hook", "Patutlah ramai recommend buku ni…", "kekal atas skrin 10 saat"],
-    [2.5, "Shot", "How to Talk to Anyone", "kulit depan"],
-    [4.5, "Shot", "The Psychology of Money", "kulit depan"],
-    [6.5, "Shot", "Isi buku", "selak muka surat"],
-    [8.3, "Shot", "Dua-dua buku", "penutup"],
+    [0.0, "Klip", "The Psychology of Money digoyang", "satu klip 10 saat, tanpa potong"],
   ];
   const iframe = document.getElementById("comp");
   const screen = document.getElementById("screen");

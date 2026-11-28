@@ -1,14 +1,20 @@
 {
-  "title": "Buku — hook sahaja (teks, tanpa voice over)",
+  "title": "Buku — satu klip goyang, hook sahaja",
   "duration": 10.0,
   "plain_cuts": true,
   "zoom": 0.06,
   "shots": [
-    [0.0, 2.5, 1, 2.0],
-    [2.5, 4.5, 2, 2.2],
-    [4.5, 6.5, 3, 35.8],
-    [6.5, 8.3, 2, 26.0],
-    [8.3, 10.0, 1, 16.05]
+    [
+      0.0,
+      10.0,
+      1,
+      2.0
+    ]
   ],
-  "hook": {"end": 10.0, "text": "Patutlah ramai recommend buku ni…", "size": 66}
+  "hook": {
+    "end": 10.0,
+    "text": "Patutlah ramai recommend buku ni…",
+    "size": 66
+  },
+  "zoom_period": 2.5
 }

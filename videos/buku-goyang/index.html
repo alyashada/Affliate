@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=1080, height=1920" />
-    <title>Buku — hook sahaja (teks, tanpa voice over)</title>
+    <title>Buku — satu klip goyang, hook sahaja</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link href="https://fonts.googleapis.com/css2?family=TikTok+Sans:wght@500;700;800&family=Noto+Color+Emoji&display=block" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
@@ -30,11 +30,7 @@
   <body>
     <div id="root" data-composition-id="main" data-start="0" data-duration="10.00" data-width="1080" data-height="1920">
       <div id="cam" style="scale: 1">
-        <video id="shot0" class="clip shot" src="assets/footage/clip1.mp4" data-start="0.00" data-duration="2.50" data-media-start="2.00" data-track-index="0" muted playsinline preload="auto"></video>
-        <video id="shot1" class="clip shot" src="assets/footage/clip2.mp4" data-start="2.50" data-duration="2.00" data-media-start="2.20" data-track-index="0" muted playsinline preload="auto"></video>
-        <video id="shot2" class="clip shot" src="assets/footage/clip3.mp4" data-start="4.50" data-duration="2.00" data-media-start="35.80" data-track-index="0" muted playsinline preload="auto"></video>
-        <video id="shot3" class="clip shot" src="assets/footage/clip2.mp4" data-start="6.50" data-duration="1.80" data-media-start="26.00" data-track-index="0" muted playsinline preload="auto"></video>
-        <video id="shot4" class="clip shot" src="assets/footage/clip1.mp4" data-start="8.30" data-duration="1.70" data-media-start="16.05" data-track-index="0" muted playsinline preload="auto"></video>
+        <video id="shot0" class="clip shot" src="assets/footage/clip1.mp4" data-start="0.00" data-duration="10.00" data-media-start="2.00" data-track-index="0" muted playsinline preload="auto"></video>
       </div>
       <div id="shade"></div>
       <div id="flash"></div>
@@ -42,11 +38,10 @@
     </div>
     <script>
       const tl = gsap.timeline({ paused: true });
-      tl.fromTo("#shot0", {scale: 1.000}, {scale: 1.060, duration: 2.50, ease: "sine.inOut"}, 0.00);
-      tl.fromTo("#shot1", {scale: 1.060}, {scale: 1.000, duration: 2.00, ease: "sine.inOut"}, 2.50);
-      tl.fromTo("#shot2", {scale: 1.000}, {scale: 1.060, duration: 2.00, ease: "sine.inOut"}, 4.50);
-      tl.fromTo("#shot3", {scale: 1.060}, {scale: 1.000, duration: 1.80, ease: "sine.inOut"}, 6.50);
-      tl.fromTo("#shot4", {scale: 1.000}, {scale: 1.060, duration: 1.70, ease: "sine.inOut"}, 8.30);
+      tl.fromTo("#shot0", {scale: 1.000}, {scale: 1.060, duration: 2.50, ease: "sine.inOut", immediateRender: true}, 0.00);
+      tl.fromTo("#shot0", {scale: 1.060}, {scale: 1.000, duration: 2.50, ease: "sine.inOut", immediateRender: false}, 2.50);
+      tl.fromTo("#shot0", {scale: 1.000}, {scale: 1.060, duration: 2.50, ease: "sine.inOut", immediateRender: false}, 5.00);
+      tl.fromTo("#shot0", {scale: 1.060}, {scale: 1.000, duration: 2.50, ease: "sine.inOut", immediateRender: false}, 7.50);
       tl.set("#cam", {rotation: 0, x: 0}, 0);
       tl.fromTo("#hook .big", {scale: 0.55, opacity: 0}, {scale: 1, opacity: 1, duration: 0.32, ease: "back.out(2.4)"}, 0.05);
       window.__timelines = window.__timelines || {};
